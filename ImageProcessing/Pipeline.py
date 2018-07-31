@@ -1,0 +1,28 @@
+import cv2
+from ImageProcessing.Stage import Stage
+
+class Pipeline:
+    def __init__(self, _pipeline=[], _img=None, _desc=None, _verbose=False):
+        self.pipeline = _pipeline
+        self.img = _img
+        self.desc = _desc
+        self.verbose = _verbose
+        self.width = None
+        self.height = None
+
+    def process(self):
+        for stage in self.pipeline:
+            _ = stage()
+            _.pass_data(self.img, self.desc)
+            _.process(self)
+
+            if _.status == Stage.STATUS_SUCCEEDED:
+                self.img, self.desc = _.retrieve_data()
+
+                if self.verbose:
+                    _.visualize_stage()
+
+            if _.status == Stage.STATUS_FAILED:
+                raise Exception('Stage %s, failed' % _._name)
+
+        cv2.waitKey(0)

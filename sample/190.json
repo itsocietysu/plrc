@@ -1,0 +1,180 @@
+{
+  "openings": [
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 32, 
+          "x": 405, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 173, 
+          "x": 427, 
+          "type": "point"
+        }
+      }, 
+      "type": "balcony_wall"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 96, 
+          "x": 334, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 143, 
+          "x": 362, 
+          "type": "point"
+        }
+      }, 
+      "type": "window"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 198, 
+          "x": 398, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 249, 
+          "x": 427, 
+          "type": "point"
+        }
+      }, 
+      "type": "window"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 271, 
+          "x": 398, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 322, 
+          "x": 427, 
+          "type": "point"
+        }
+      }, 
+      "type": "window"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 137, 
+          "x": 318, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 168, 
+          "x": 378, 
+          "type": "point"
+        }
+      }, 
+      "type": "balcony_door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 129, 
+          "x": 109, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 171, 
+          "x": 154, 
+          "type": "point"
+        }
+      }, 
+      "type": "door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 198, 
+          "x": 111, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 240, 
+          "x": 156, 
+          "type": "point"
+        }
+      }, 
+      "type": "door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 104, 
+          "x": 72, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 150, 
+          "x": 109, 
+          "type": "point"
+        }
+      }, 
+      "type": "door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 184, 
+          "x": 8, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 233, 
+          "x": 58, 
+          "type": "point"
+        }
+      }, 
+      "type": "door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 66, 
+          "x": 32, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 97, 
+          "x": 67, 
+          "type": "point"
+        }
+      }, 
+      "type": "vent_channel"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 92, 
+          "x": 30, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 131, 
+          "x": 66, 
+          "type": "point"
+        }
+      }, 
+      "type": "vent_channel"
+    }
+  ]
+}

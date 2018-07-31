@@ -1,0 +1,228 @@
+{
+  "openings": [
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 354, 
+          "x": 141, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 615, 
+          "x": 158, 
+          "type": "point"
+        }
+      }, 
+      "type": "balcony_wall"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 76, 
+          "x": 23, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 310, 
+          "x": 42, 
+          "type": "point"
+        }
+      }, 
+      "type": "balcony_wall"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 90, 
+          "x": 42, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 159, 
+          "x": 77, 
+          "type": "point"
+        }
+      }, 
+      "type": "window"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 228, 
+          "x": 41, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 299, 
+          "x": 79, 
+          "type": "point"
+        }
+      }, 
+      "type": "window"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 155, 
+          "x": 4, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 229, 
+          "x": 113, 
+          "type": "point"
+        }
+      }, 
+      "type": "door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 464, 
+          "x": 201, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 528, 
+          "x": 306, 
+          "type": "point"
+        }
+      }, 
+      "type": "door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 375, 
+          "x": 231, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 467, 
+          "x": 271, 
+          "type": "point"
+        }
+      }, 
+      "type": "window"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 182, 
+          "x": 480, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 205, 
+          "x": 559, 
+          "type": "point"
+        }
+      }, 
+      "type": "door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 104, 
+          "x": 596, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 187, 
+          "x": 694, 
+          "type": "point"
+        }
+      }, 
+      "type": "door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 379, 
+          "x": 547, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 470, 
+          "x": 581, 
+          "type": "point"
+        }
+      }, 
+      "type": "door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 374, 
+          "x": 472, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 397, 
+          "x": 563, 
+          "type": "point"
+        }
+      }, 
+      "type": "door"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 483, 
+          "x": 442, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 526, 
+          "x": 475, 
+          "type": "point"
+        }
+      }, 
+      "type": "vent_channel"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 527, 
+          "x": 439, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 575, 
+          "x": 478, 
+          "type": "point"
+        }
+      }, 
+      "type": "vent_channel"
+    }, 
+    {
+      "placement": {
+        "type": "line", 
+        "point_1": {
+          "y": 576, 
+          "x": 439, 
+          "type": "point"
+        }, 
+        "point_2": {
+          "y": 603, 
+          "x": 478, 
+          "type": "point"
+        }
+      }, 
+      "type": "water_pipes"
+    }
+  ]
+}
