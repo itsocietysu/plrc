@@ -32,8 +32,8 @@ color_mapping = {
 
 def process_line(line_obj):
     if 'type' in line_obj and line_obj['type'] == 'line':
-        return [(int(line_obj['point_1']['x']) / SCALER + SHIFT, int(line_obj['point_1']['y']) / SCALER + SHIFT),
-                (int(line_obj['point_2']['x']) / SCALER + SHIFT, int(line_obj['point_2']['y']) / SCALER + SHIFT)]
+        return [(int(line_obj['point_1']['x'] / SCALER) + SHIFT, int(line_obj['point_1']['y'] / SCALER) + SHIFT),
+                (int(line_obj['point_2']['x'] / SCALER) + SHIFT, int(line_obj['point_2']['y'] / SCALER) + SHIFT)]
 
     return None
 

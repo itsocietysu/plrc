@@ -23,7 +23,7 @@ class Point:
         return (int(self.x), int(self.y))
 
     def to_dict(self):
-        return OrderedDict([('type', Point._type), ('x', self.x), ('y', self.y)])
+        return OrderedDict([('type', Point._type), ('x', float(self.x)), ('y', float(self.y))])
 
     def from_dict(self, obj):
         if 'type' in obj and obj['type'] == Point._type and 'x' in obj and 'y' in obj:
