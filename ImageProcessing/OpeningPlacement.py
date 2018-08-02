@@ -49,10 +49,10 @@ class OpeningPlacement(Stage):
                         ex = max(ex, _[0])
                         ey = max(ey, _[1])
 
-                    sx += p1.x - shift + 1
-                    sy += p1.y - shift + 1
-                    ex += p1.x - shift - 1
-                    ey += p1.y - shift - 1
+                    sy += p1.y - shift
+                    sx += p1.x - shift
+                    ex += p1.x - shift
+                    ey += p1.y - shift
 
                     new_item = copy.deepcopy(opening)
                     new_item.placement.point_1 = Point(sx, sy)
