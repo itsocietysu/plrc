@@ -1,0 +1,14 @@
+item {
+  id: 1
+  name: 'door'
+}
+
+item {
+  id: 2
+  name: 'balcony_door'
+}
+
+item {
+  id: 3
+  name: 'window'
+}

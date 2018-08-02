@@ -5,5 +5,5 @@
 To run the example use for instance:
 
 ```
-python ./sample/186.png ./sample/186.xml
+python ./sample/186.png ./out/rooms/
 ```

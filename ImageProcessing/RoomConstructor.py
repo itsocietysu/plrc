@@ -1,5 +1,3 @@
-import cv2
-import numpy as np
 import json
 
 from Entities.Room import Room
@@ -21,7 +19,7 @@ class RoomConstructor(Stage):
         """smooth the data"""
         res = []
         for i, cnt in enumerate(self.img):
-            room = Room()
+            room = Room([], [])
             l = len(cnt) - 1
             prev = cnt[l]
             room.walls = []

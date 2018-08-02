@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import sys
 import json
 
 H = 1000
@@ -11,8 +10,8 @@ SHIFT = 100
 img = np.zeros((H, W, 3), np.uint8)
 
 input_tags = None
-for i in range(7):
-    with open('%d.json' % i) as fp:
+for i in range(6):
+    with open('./out/185/%d.json' % i) as fp:
         nl = json.load(fp)
         if input_tags == None:
             input_tags = nl
@@ -67,11 +66,11 @@ processing_mapper = {
 
 for _ in input_tags['walls']:
     wall = processing_mapper[_['type']](_)
-    cv2.rectangle(img, wall[0], wall[1], color_mapping[_['type']], 2)
+    cv2.line(img, wall[0], wall[1], color_mapping[_['type']], 2)
 
 for _ in input_tags['openings']:
     obj = processing_mapper[_['type']](_)
-    cv2.rectangle(img, obj[0], obj[1], color_mapping[_['type']], 2)
+    cv2.line(img, obj[0], obj[1], color_mapping[_['type']], 2)
 
 
 cv2.imshow('res', img)

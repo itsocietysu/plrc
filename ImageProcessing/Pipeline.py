@@ -9,6 +9,7 @@ class Pipeline:
         self.verbose = _verbose
         self.width = None
         self.height = None
+        self.out_dir = None
 
     def process(self):
         for stage in self.pipeline:

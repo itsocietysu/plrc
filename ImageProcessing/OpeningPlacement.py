@@ -1,6 +1,4 @@
-import cv2
 import copy
-import json
 import numpy as np
 
 from ImageProcessing.Stage import Stage
@@ -66,8 +64,6 @@ class OpeningPlacement(Stage):
             render_room(blank, new_room)
 
             res.append(new_room)
-            with open('%d.json' % i, 'wt') as fp:
-                json.dump(new_room.to_dict(), fp, indent=2)
 
-        self.desc = self.desc
+        self.desc = res
         self.update_status(Stage.STATUS_SUCCEEDED)
