@@ -29,8 +29,8 @@ class RoomConstructor(Stage):
                 room.walls.append(wall)
                 prev = curr
 
-            with open('%d.json' % i, 'wt') as fp:
-               json.dump(room.to_dict(), fp, indent=2)
+            #with open('%d.json' % i, 'wt') as fp:
+            #  json.dump(room.to_dict(), fp, indent=2)
 
             res.append(room)
 
