@@ -10,8 +10,8 @@ SHIFT = 100
 img = np.zeros((H, W, 3), np.uint8)
 
 input_tags = None
-for i in range(8):
-    with open('./out/186/%d.json' % i) as fp:
+for i in range(7):
+    with open('./out/189/%d.json' % i) as fp:
         nl = json.load(fp)
         if input_tags == None:
             input_tags = nl
