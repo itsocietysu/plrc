@@ -23,7 +23,20 @@ class Room:
         return OrderedDict([('walls', walls),
                             ('openings', openings)])
 
+    def get_bounding_rect(self):
+        sx, sy, ex, ey = 10000, 10000, 0, 0
+        for w in self.walls:
+            l = w.inner_part
+            sx = min(sx, l.point_1.x)
+            sy = min(sy, l.point_2.x)
+            ex = max(ex, l.point_1.x)
+            ey = max(ey, l.point_2.x)
+         #bb.w =
+         #bb.h =
+        return ex, ey
+
     def from_dict(self, obj):
+
         if 'walls' in obj:
             self.walls    = [Room._processor_map[_['type']](_) for _ in obj['walls']    if _['type'] in Room._processor_map]
 
