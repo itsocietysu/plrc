@@ -26,4 +26,5 @@ class Pipeline:
             if _.status == Stage.STATUS_FAILED:
                 raise Exception('Stage %s, failed' % _._name)
 
-        cv2.waitKey(0)
+        if self.verbose:
+            cv2.waitKey(0)

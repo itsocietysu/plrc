@@ -8,7 +8,7 @@ from ImageProcessing.Stage import Stage
 class Components(Stage):
     _name = 'components'
 
-    MIN_SIZE = 1800
+    MIN_SIZE = 1500
     MIN_FILL_RATE = 0.6
     ASPECT_RATIO = 5.0
     CONNECTIVITY = 4
@@ -28,7 +28,7 @@ class Components(Stage):
             if output[2][i][0] <= 5:
                 continue
 
-            if output[2][i][1] >= self.img.shape[1] - 1:
+            if output[2][i][0] >= self.img.shape[1] - 1:
                 continue
 
             if output[2][i][4] <= Components.MIN_SIZE:
