@@ -1,4 +1,3 @@
-rem C:\Users\daniil.savchuk\AppData\Local\Programs\Python\Python35\python main.py .\Sample\133.png ./out/133/
 C:\Users\daniil.savchuk\AppData\Local\Programs\Python\Python35\python main.py .\Sample\185.png ./out/185/
 rem C:\Users\daniil.savchuk\AppData\Local\Programs\Python\Python35\python main.py .\Sample\186.png ./out/186/
 rem C:\Users\daniil.savchuk\AppData\Local\Programs\Python\Python35\python main.py .\Sample\187.png ./out/187/
