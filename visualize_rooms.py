@@ -10,7 +10,6 @@ from Renderer.Render import render_room
 
 H = 1000
 W = 1000
-SCALER = 3
 SHIFT = 100
 
 img = np.zeros((H, W, 3), np.uint8)
@@ -33,10 +32,20 @@ def read_apartments(path):
 
 if __name__ == '__main__':
     room = Room().from_dict(read_apartments(sys.argv[1]))
+    scale = 1.0
+    if len(sys.argv) == 3:
+        scale = float(sys.argv[2])
 
-    w, h = room.get_bounding_rect()
-    img = np.zeros((int(w + 2 * SHIFT), int(h + 2 * SHIFT), 3), np.uint8)
+    x0, y0, h, w = room.get_bounding_rect()
+
+    x0 *= scale
+    y0 *= scale
+    h *= scale
+    w *= scale
+    SHIFT *= scale
+
+    img = np.zeros((int(w + SHIFT), int(h + SHIFT), 3), np.uint8)
 
 
-    cv2.imshow('res', render_room(img, room, line_w=2))
+    cv2.imshow('res', render_room(img, room, line_w=2, shift=(Point(SHIFT / 2 - x0 / 2, SHIFT / 2 - y0 / 2)), scale=scale))
     cv2.waitKey(0)

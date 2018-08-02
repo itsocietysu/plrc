@@ -28,12 +28,12 @@ class Room:
         for w in self.walls:
             l = w.inner_part
             sx = min(sx, l.point_1.x)
-            sy = min(sy, l.point_2.x)
+            sy = min(sy, l.point_2.y)
             ex = max(ex, l.point_1.x)
-            ey = max(ey, l.point_2.x)
+            ey = max(ey, l.point_2.y)
          #bb.w =
          #bb.h =
-        return ex, ey
+        return sx, sy, ex, ey
 
     def from_dict(self, obj):
 
