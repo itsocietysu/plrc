@@ -1,3 +1,5 @@
+from bottle import template
+
 import cv2
 import numpy as np
 import json
@@ -16,36 +18,36 @@ img = np.zeros((H, W, 3), np.uint8)
 
 def read_apartments(path):
     files = os.listdir(path)
-    input_tags = None
+    input_tags = []
     for _ in files:
         with open('%s%s' % (path, _)) as fp:
             nl = json.load(fp)
-            if input_tags == None:
-                input_tags = nl
-            else:
-                input_tags['walls'].extend(nl['walls'])
-                input_tags['openings'].extend(nl['openings'])
+            input_tags.append(nl)
 
     return input_tags
 
 
 
 if __name__ == '__main__':
-    room = Room().from_dict(read_apartments(sys.argv[1]))
+    rooms = [Room().from_dict(_) for _ in read_apartments(sys.argv[1])]
     scale = 1.0
     if len(sys.argv) == 3:
         scale = float(sys.argv[2])
 
-    x0, y0, h, w = room.get_bounding_rect()
+    x0, y0, x1, y1 = 10000, 10000, 0, 0
+    for _ in rooms:
+        _x0, _y0, _x1, _y1 = _.get_bounding_rect()
+        x0, y0, x1, y1 = min(x0, _x0), min(y0, _y0), max(x1, _x1), max(y1, _y1)
 
     x0 *= scale
     y0 *= scale
-    h *= scale
-    w *= scale
+    x1 *= scale
+    y1 *= scale
     SHIFT *= scale
 
-    img = np.zeros((int(w + SHIFT), int(h + SHIFT), 3), np.uint8)
+    img = np.zeros((int(y1 + SHIFT), int(x1 + SHIFT), 3), np.uint8)
 
+    for _ in rooms:
+        cv2.imshow('res', render_room(img, _, line_w=2, shift=(Point(SHIFT / 2 - x0 / 2, SHIFT / 2 - y0 / 2)), scale=scale))
 
-    cv2.imshow('res', render_room(img, room, line_w=2, shift=(Point(SHIFT / 2 - x0 / 2, SHIFT / 2 - y0 / 2)), scale=scale))
     cv2.waitKey(0)
