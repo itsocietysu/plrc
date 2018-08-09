@@ -21,15 +21,12 @@ class OpeningPlacement(Stage):
     def process(self, parent):
         """smooth the data"""
         res = []
-        blank = np.zeros((parent.height, parent.width), np.uint8)
         for i, room in enumerate(self.img):
-            render_room(blank, room, gray=True)
             new_room = copy.deepcopy(room)
             for opening in self.desc.openings:
                 new_item = self.find_opening_place(new_room.walls, opening)
                 if new_item:
                     new_room.openings.append(new_item)
-                render_room(blank, new_room)
             res.append(new_room)
         self.desc = res
         self.update_status(Stage.STATUS_SUCCEEDED)
@@ -76,4 +73,4 @@ class OpeningPlacement(Stage):
                     new_item.placement.point_1 = intersection_points[0]
                     new_item.placement.point_2 = intersection_points[1]
                     return new_item
-        return False
+        return None

@@ -48,4 +48,4 @@ class Line:
             return Line(Point(float(intersection.coords[0][0]), float(intersection.coords[0][1])),
                         Point(float(intersection.coords[1][0]), float(intersection.coords[1][1])))
 
-        return False
+        return None
