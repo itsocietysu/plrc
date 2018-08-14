@@ -3,6 +3,8 @@ import numpy as np
 
 from ImageProcessing.Stage import Stage
 
+from Entities.Line import Line
+
 from Renderer.Render import render_room
 
 from Entities.Point import Point
@@ -20,50 +22,55 @@ class OpeningPlacement(Stage):
         """smooth the data"""
         res = []
         for i, room in enumerate(self.img):
-            blank = np.zeros((parent.height, parent.width), np.uint8)
-            render_room(blank, room, gray=True)
-
             new_room = copy.deepcopy(room)
             for opening in self.desc.openings:
-                shift = 0
-                if opening._type == 'door':
-                    shift = OpeningPlacement.WIDER
-
-                p1 = opening.placement.point_1
-                p2 = opening.placement.point_2
-                _sx = int(min(p1.x, p2.x)) - shift
-                _ex = int(max(p1.x, p2.x)) + shift
-
-                _sy = int(min(p1.y, p2.y)) - shift
-                _ey = int(max(p1.y, p2.y)) + shift
-
-                rect_img = blank[_sy:_ey, _sx:_ex]
-
-                maskRect = np.where(rect_img != 0)
-                maskPts = np.hstack((maskRect[1][:, np.newaxis], maskRect[0][:, np.newaxis]))
-                sx, sy, ex, ey = parent.width, parent.height, 0, 0
-                if len(maskPts):
-                    for _ in maskPts:
-                        sx = min(sx, _[0])
-                        sy = min(sy, _[1])
-                        ex = max(ex, _[0])
-                        ey = max(ey, _[1])
-
-                    sy += p1.y - shift
-                    sx += p1.x - shift
-                    ex += p1.x - shift
-                    ey += p1.y - shift
-
-                    new_item = copy.deepcopy(opening)
-                    new_item.placement.point_1 = Point(sx, sy)
-                    new_item.placement.point_2 = Point(ex, ey)
-
+                new_item = self.find_opening_place(new_room.walls, opening)
+                if new_item:
                     new_room.openings.append(new_item)
-
-            blank = np.zeros((parent.height, parent.width, 3), np.uint8)
-            render_room(blank, new_room)
-
             res.append(new_room)
-
         self.desc = res
         self.update_status(Stage.STATUS_SUCCEEDED)
+
+    def find_opening_place(self, walls, opening):
+        shift = 0
+        if opening._type == 'door':
+            shift = OpeningPlacement.WIDER
+
+        p1 = opening.placement.point_1
+        p2 = opening.placement.point_2
+
+        _sx = int(min(p1.x, p2.x)) - shift
+        _ex = int(max(p1.x, p2.x)) + shift
+        _sy = int(min(p1.y, p2.y)) - shift
+        _ey = int(max(p1.y, p2.y)) + shift
+
+        points = []
+        points.append(Point(_sx, _sy))
+        points.append(Point(_sx, _ey))
+        points.append(Point(_ex, _ey))
+        points.append(Point(_ex, _sy))
+
+        lines = []
+        lines.append(Line(points[0], points[1]))
+        lines.append(Line(points[1], points[2]))
+        lines.append(Line(points[2], points[3]))
+        lines.append(Line(points[3], points[0]))
+
+        intersection_points = []
+        for wall in walls:
+            for line in lines:
+                intersection = wall.inner_part.segment_intersection(line)
+
+                if type(intersection) == Line:
+                    intersection_points.append(intersection.point_1)
+                    intersection_points.append(intersection.point_2)
+
+                if type(intersection) == Point:
+                    intersection_points.append(intersection)
+
+                if len(intersection_points) == 2:
+                    new_item = copy.deepcopy(opening)
+                    new_item.placement.point_1 = intersection_points[0]
+                    new_item.placement.point_2 = intersection_points[1]
+                    return new_item
+        return None

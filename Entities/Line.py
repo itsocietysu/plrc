@@ -2,6 +2,10 @@ from collections import OrderedDict
 
 from Entities.Point import Point
 
+from shapely.geometry import LineString
+from shapely.geometry import Point as ShapelyPoint
+
+
 class Line:
     _type = 'line'
 
@@ -30,3 +34,18 @@ class Line:
             self.point_2 = Point().from_dict(obj['point_2'])
 
         return self
+
+    def segment_intersection(self, line2):
+        line1 = self
+        l1 = LineString([(line1.point_1.x, line1.point_1.y), (line1.point_2.x, line1.point_2.y)])
+        l2 = LineString([(line2.point_1.x, line2.point_1.y), (line2.point_2.x, line2.point_2.y)])
+        intersection = l1.intersection(l2)
+
+        if type(intersection) == ShapelyPoint:
+            return Point(intersection.x, intersection.y)
+
+        if type(intersection) == LineString:
+            return Line(Point(float(intersection.coords[0][0]), float(intersection.coords[0][1])),
+                        Point(float(intersection.coords[1][0]), float(intersection.coords[1][1])))
+
+        return None
