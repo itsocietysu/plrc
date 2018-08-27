@@ -1,11 +1,8 @@
 import copy
-import numpy as np
 
 from ImageProcessing.Stage import Stage
 
 from Entities.Line import Line
-
-from Renderer.Render import render_room
 
 from Entities.Point import Point
 
@@ -24,14 +21,23 @@ class OpeningPlacement(Stage):
         for i, room in enumerate(self.img):
             new_room = copy.deepcopy(room)
             for opening in self.desc.openings:
-                new_item = self.find_opening_place(new_room.walls, opening)
-                if new_item:
-                    new_room.openings.append(new_item)
+                new_items = self.find_opening_place(new_room.walls, opening)
+                if new_items:
+                    for new_item in new_items:
+                        new_room.openings.append(new_item)
             res.append(new_room)
         self.desc = res
         self.update_status(Stage.STATUS_SUCCEEDED)
 
     def find_opening_place(self, walls, opening):
+
+        def item_in_wall(placement):
+            for w in walls:
+                if type(placement.segment_intersection(w.inner_part)) == Line:
+                    return True
+            return False
+
+        new_items = []
         shift = 0
         if opening._type == 'door':
             shift = OpeningPlacement.WIDER
@@ -44,20 +50,19 @@ class OpeningPlacement(Stage):
         _sy = int(min(p1.y, p2.y)) - shift
         _ey = int(max(p1.y, p2.y)) + shift
 
-        points = []
-        points.append(Point(_sx, _sy))
-        points.append(Point(_sx, _ey))
-        points.append(Point(_ex, _ey))
-        points.append(Point(_ex, _sy))
-
-        lines = []
-        lines.append(Line(points[0], points[1]))
-        lines.append(Line(points[1], points[2]))
-        lines.append(Line(points[2], points[3]))
-        lines.append(Line(points[3], points[0]))
+        p = [Point(_sx, _sy), Point(_sx, _ey), Point(_ex, _ey), Point(_ex, _sy)]
+        lines = [Line(p[0], p[1]), Line(p[1], p[2]), Line(p[2], p[3]), Line(p[3], p[0])]
 
         intersection_points = []
         for wall in walls:
+            intersection = wall.inner_part.rectangle_intersection(Line(p[0], p[2]))
+            if intersection:
+                if item_in_wall(intersection):
+                    new_item = copy.deepcopy(opening)
+                    new_item.placement = intersection
+                    new_items.append(new_item)
+                continue
+
             for line in lines:
                 intersection = wall.inner_part.segment_intersection(line)
 
@@ -72,5 +77,6 @@ class OpeningPlacement(Stage):
                     new_item = copy.deepcopy(opening)
                     new_item.placement.point_1 = intersection_points[0]
                     new_item.placement.point_2 = intersection_points[1]
-                    return new_item
-        return None
+                    new_items.append(new_item)
+
+        return new_items
