@@ -38,7 +38,7 @@ class OpeningPlacement(Stage):
             return False
 
         new_items = []
-        shift = 0
+        shift = 2
         if opening._type == 'door':
             shift = OpeningPlacement.WIDER
 
