@@ -8,6 +8,7 @@ from Entities.Door import Door
 from Entities.Window import Window
 from Entities.Line import Line
 from Entities.Point import Point
+from Entities.Item import Item
 
 from Utils.label_map_reader import *
 
@@ -15,7 +16,7 @@ from Utils.label_map_reader import *
 """Upload processing data"""
 class ObjectDetection(Stage):
     _name = 'object_detection'
-    _graph_location = './Assets/frozen_inference_graph_seconds.pb'
+    _graph_location = './Assets/frozen_inference_graph.pb'
     _label_map_location = './Assets/label_map.pbtxt'
 
     def __init__(self):
@@ -43,8 +44,6 @@ class ObjectDetection(Stage):
             return s.run([detection_boxes, detection_scores, detection_classes, num_detections],
                   feed_dict={image_tensor: img_np})
 
-
-
     def process(self, parent):
         """load the data"""
         self.update_status(Stage.STATUS_RUNNING)
@@ -60,9 +59,21 @@ class ObjectDetection(Stage):
         room = Room()
 
         choice = {
-            'door': Door,
-            'window': Window,
-            'balcony_door': Door,
+            'door': [Door, None],
+            'window': [Window, None],
+            'balcony_door': [Door, None],
+            'vent_channel': [Item, 'vent_channel'],
+            'water_pipes': [Item, 'water_pipes'],
+            'toilet': [Item, 'toilet'],
+            'bathroom': [Item, 'bathroom'],
+            'shower_cabin': [Item, 'shower_cabin'],
+            'sink': [Item, 'sink'],
+            'kitchen_sink': [Item, 'kitchen_sink'],
+            'stove': [Item, 'stove'],
+            'washer': [Item, 'washer'],
+            'test': [Item, 'test'],
+            'test2': [Item, 'test2'],
+            'storeroom': [Item, 'storeroom']
         }
 
         for i in range(int(num[0])):
@@ -73,7 +84,9 @@ class ObjectDetection(Stage):
 
             placement = Line(Point(sx, sy), Point(ex, ey))
             cl = choice[labels[int(classes[0][i])]]
-            room.openings.append(cl(placement))
+            t = cl[1]
+            cl = cl[0]
+            room.openings.append(cl(placement, t=t))
 
         self.desc = room
 
