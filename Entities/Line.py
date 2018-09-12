@@ -1,3 +1,4 @@
+
 from collections import OrderedDict
 
 from Entities.Point import Point
@@ -48,4 +49,41 @@ class Line:
             return Line(Point(float(intersection.coords[0][0]), float(intersection.coords[0][1])),
                         Point(float(intersection.coords[1][0]), float(intersection.coords[1][1])))
 
-        return False
+        return None
+
+    def rectangle_intersection(self, rect):
+        segment = self
+
+        def is_point_inside_rectangle(point):
+            sp = rect.point_1
+            ep = rect.point_2
+            if sp.x <= point.x <= ep.x and sp.y <= point.y <= ep.y:
+                return True
+            return False
+
+        point1_inside = is_point_inside_rectangle(segment.point_1)
+        point2_inside = is_point_inside_rectangle(segment.point_2)
+
+        if not point1_inside and not point2_inside:
+            return None
+
+        if point1_inside and point2_inside:
+            return segment
+
+        if point1_inside:
+            inside_point = segment.point_1
+        if point2_inside:
+            inside_point = segment.point_2
+
+        p1 = rect.point_1
+        p2 = rect.point_2
+
+        p = [Point(p1.x, p1.y), Point(p1.x, p2.y), Point(p2.x, p2.y), Point(p2.x, p1.y)]
+        lines_rect = [Line(p[0], p[1]), Line(p[1], p[2]), Line(p[2], p[3]), Line(p[3], p[0])]
+
+        for line in lines_rect:
+            intersection = segment.segment_intersection(line)
+            if type(intersection) == Point:
+                return Line(inside_point, intersection)
+
+        return None

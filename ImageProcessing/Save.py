@@ -1,4 +1,6 @@
 import json
+import os
+
 from bottle import template
 
 from ImageProcessing.Stage import Stage
@@ -13,6 +15,9 @@ class Save(Stage):
     def process(self, parent):
         """load the data"""
         self.update_status(Stage.STATUS_RUNNING)
+
+        if not os.path.exists(parent.out_dir):
+            os.makedirs(parent.out_dir)
 
         for i, _ in enumerate(self.desc):
             with open('%s/%d.json' % (parent.out_dir, i), 'wt') as fp:

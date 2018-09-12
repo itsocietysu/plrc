@@ -3,6 +3,7 @@ from collections import OrderedDict
 from Entities.Wall import Wall
 from Entities.Door import Door
 from Entities.Window import Window
+from Entities.Item import Item
 
 class Room:
     _type = 'room'
@@ -10,6 +11,7 @@ class Room:
         'window': lambda _: Window().from_dict(_),
         'door': lambda _: Door().from_dict(_),
         'wall': lambda _: Wall().from_dict(_),
+        'item': lambda _: Item().from_dict(_),
     }
 
     def __init__(self, _walls=[], _openings=[]):
@@ -31,8 +33,6 @@ class Room:
             sy = min(sy, l.point_2.y)
             ex = max(ex, l.point_1.x)
             ey = max(ey, l.point_2.y)
-         #bb.w =
-         #bb.h =
         return sx, sy, ex, ey
 
     def from_dict(self, obj):

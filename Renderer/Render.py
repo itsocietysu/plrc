@@ -8,8 +8,23 @@ COLOR_MAP = {
     'balcony_wall': (100, 50, 200),
     'window': (255, 0, 0),
     'vent_channel': (255, 255, 0),
-    'wall': (0, 0, 255)
+    'wall': (100, 0, 100),
+    'outer_wall': (0, 0, 255),
+    'bearing_wall': (0, 0, 200),
+
+    'none': (100, 100, 100),
+
+    'water_pipes': (255, 255, 3),
+    'toilet': (255, 255, 10),
+    'bathroom': (255, 255, 20),
+    'shower_cabin': (255, 255, 30),
+    'sink': (255, 255, 40),
+    'kitchen_sink': (255, 255, 50),
+    'stove': (255, 255, 60),
+    'washer': (255, 255, 70),
+    'storeroom': (255, 255, 80)
 }
+
 
 def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
     def tc(c):
@@ -22,12 +37,17 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
             p1 = wall.inner_part.point_1.mult(scale).add(shift).int_tuple()
             p2 = wall.inner_part.point_2.mult(scale).add(shift).int_tuple()
 
-            cv2.line(img, p1, p2, tc(COLOR_MAP[wall._type]), line_w)
+            cv2.line(img, p1, p2, tc(COLOR_MAP[wall.wall_type]), line_w)
 
         for o in room.openings:
             p1 = o.placement.point_1.mult(scale).add(shift).int_tuple()
             p2 = o.placement.point_2.mult(scale).add(shift).int_tuple()
 
-            cv2.line(img, p1, p2, tc(COLOR_MAP[o._type]), line_w)
+            if o._type == 'item':
+                if o.item_type == 'test' or o.item_type == 'test2':
+                    continue
+                cv2.rectangle(img, p1, p2, tc(COLOR_MAP[o.item_type]), line_w)
+            else:
+                cv2.line(img, p1, p2, tc(COLOR_MAP[o._type]), line_w)
 
     return img

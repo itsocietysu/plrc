@@ -5,7 +5,7 @@ from Entities.Line import Line
 class Door:
     _type = 'door'
 
-    def __init__(self, _placement=None, _opened=None):
+    def __init__(self, _placement=None, _opened=None, t=None):
         self.placement = _placement
         self.opened = _opened
 
