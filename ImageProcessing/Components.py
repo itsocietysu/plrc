@@ -8,8 +8,7 @@ from ImageProcessing.Stage import Stage
 class Components(Stage):
     _name = 'components'
 
-    MIN_SIZE = 15000
-    MIN_FILL_RATE = 0.6
+    MIN_FILL_RATE = 0.45
     ASPECT_RATIO = 5.0
     CONNECTIVITY = 4
     ERODE_KERNEL = np.ones((25, 25), np.uint8)
@@ -23,6 +22,8 @@ class Components(Stage):
 
         output = cv2.connectedComponentsWithStats(self.img, Components.CONNECTIVITY, cv2.CV_32S)
 
+        MIN_SIZE = int(0.01 * parent.width * parent.height)
+
         valuable_components = []
         for i in range(output[0]):
             if output[2][i][0] <= 5:
@@ -31,7 +32,7 @@ class Components(Stage):
             if output[2][i][0] >= self.img.shape[1] - 1:
                 continue
 
-            if output[2][i][4] <= Components.MIN_SIZE:
+            if output[2][i][4] <= MIN_SIZE:
                 continue
 
             factor = float(output[2][i][4]) / (float(output[2][i][2] * output[2][i][3]))
@@ -43,7 +44,6 @@ class Components(Stage):
                continue
 
             valuable_components.append(i)
-
 
         w, h = self.img.shape[0], self.img.shape[1]
         images = []
