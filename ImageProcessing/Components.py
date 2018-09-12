@@ -8,7 +8,7 @@ from ImageProcessing.Stage import Stage
 class Components(Stage):
     _name = 'components'
 
-    MIN_SIZE = 15000
+    MIN_SIZE = 12000
     MIN_FILL_RATE = 0.6
     ASPECT_RATIO = 5.0
     CONNECTIVITY = 4
