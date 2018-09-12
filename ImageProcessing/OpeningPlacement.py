@@ -38,8 +38,8 @@ class OpeningPlacement(Stage):
             return False
 
         new_items = []
-        shift = 2
-        if opening._type == 'door':
+        shift = 0
+        if opening._type != 'window':
             shift = OpeningPlacement.WIDER
 
         p1 = opening.placement.point_1
@@ -53,30 +53,37 @@ class OpeningPlacement(Stage):
         p = [Point(_sx, _sy), Point(_sx, _ey), Point(_ex, _ey), Point(_ex, _sy)]
         lines = [Line(p[0], p[1]), Line(p[1], p[2]), Line(p[2], p[3]), Line(p[3], p[0])]
 
-        intersection_points = []
-        for wall in walls:
-            intersection = wall.inner_part.rectangle_intersection(Line(p[0], p[2]))
-            if intersection:
-                if item_in_wall(intersection):
-                    new_item = copy.deepcopy(opening)
-                    new_item.placement = intersection
-                    new_items.append(new_item)
-                continue
+        if opening._type == 'item':
+            new_item = copy.deepcopy(opening)
+            new_item.placement.point_1 = Point(_sx, _sy)
+            new_item.placement.point_2 = Point(_ex, _ey)
+            new_items.append(new_item)
 
-            for line in lines:
-                intersection = wall.inner_part.segment_intersection(line)
+        else:
+            intersection_points = []
+            for wall in walls:
+                intersection = wall.inner_part.rectangle_intersection(Line(p[0], p[2]))
+                if intersection:
+                    if item_in_wall(intersection):
+                        new_item = copy.deepcopy(opening)
+                        new_item.placement = intersection
+                        new_items.append(new_item)
+                    continue
 
-                if type(intersection) == Line:
-                    intersection_points.append(intersection.point_1)
-                    intersection_points.append(intersection.point_2)
+                for line in lines:
+                    intersection = wall.inner_part.segment_intersection(line)
 
-                if type(intersection) == Point:
-                    intersection_points.append(intersection)
+                    if type(intersection) == Line:
+                        intersection_points.append(intersection.point_1)
+                        intersection_points.append(intersection.point_2)
 
-                if len(intersection_points) == 2:
-                    new_item = copy.deepcopy(opening)
-                    new_item.placement.point_1 = intersection_points[0]
-                    new_item.placement.point_2 = intersection_points[1]
-                    new_items.append(new_item)
+                    if type(intersection) == Point:
+                        intersection_points.append(intersection)
+
+                    if len(intersection_points) == 2:
+                        new_item = copy.deepcopy(opening)
+                        new_item.placement.point_1 = intersection_points[0]
+                        new_item.placement.point_2 = intersection_points[1]
+                        new_items.append(new_item)
 
         return new_items
