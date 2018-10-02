@@ -22,11 +22,14 @@ COLOR_MAP = {
     'kitchen_sink': (255, 255, 50),
     'stove': (255, 255, 60),
     'washer': (255, 255, 70),
-    'storeroom': (255, 255, 80)
+    'storeroom': (255, 255, 80),
+
+    'arch': (0, 255, 255)
 }
 
 
 def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
+
     def tc(c):
         if gray:
             return (c[0] + c[1] + c[2]) / 3

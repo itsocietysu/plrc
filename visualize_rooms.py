@@ -24,8 +24,6 @@ def read_apartments(path):
 
     return input_tags
 
-
-
 if __name__ == '__main__':
     rooms = [Room().from_dict(_) for _ in read_apartments(sys.argv[1])]
     scale = 1.0
@@ -46,6 +44,8 @@ if __name__ == '__main__':
     img = np.zeros((int(y1 + SHIFT), int(x1 + SHIFT), 3), np.uint8)
 
     for _ in rooms:
-        cv2.imshow('res', render_room(img, _, line_w=2, shift=(Point(SHIFT / 2 - x0 / 2, SHIFT / 2 - y0 / 2)), scale=scale))
+        render_room(img, _, line_w=2, shift=Point(0, 0), scale=scale)
 
+    #cv2.imshow('res', define_wall_sizes(img))
+    cv2.imshow('res', img)
     cv2.waitKey(0)

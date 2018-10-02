@@ -10,7 +10,7 @@ from Entities.Point import Point
 class OpeningPlacement(Stage):
     _name = 'opening_placement'
 
-    WIDER = -10
+    WIDER = -6
 
     def __init__(self):
         Stage().__init__()
@@ -53,7 +53,7 @@ class OpeningPlacement(Stage):
         p = [Point(_sx, _sy), Point(_sx, _ey), Point(_ex, _ey), Point(_ex, _sy)]
         lines = [Line(p[0], p[1]), Line(p[1], p[2]), Line(p[2], p[3]), Line(p[3], p[0])]
 
-        if opening._type == 'item':
+        if opening._type == 'item' or opening._type == 'arch':
             new_item = copy.deepcopy(opening)
             new_item.placement.point_1 = Point(_sx, _sy)
             new_item.placement.point_2 = Point(_ex, _ey)
@@ -87,3 +87,4 @@ class OpeningPlacement(Stage):
                         new_items.append(new_item)
 
         return new_items
+
