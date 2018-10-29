@@ -8,7 +8,13 @@ from Entities.Point import Point
 
 from ImageProcessing.Stage import Stage
 
+from Interface.ChooseItem import choose_wall
+
 from Entities.Wall import WALL_TYPE_MAP
+
+from Interface.Get import get_point
+from Interface.Get import get_num
+
 WALL_MAP = {
             'space':        0,
             'wall':         1,
@@ -63,11 +69,35 @@ class RoomConstructor(Stage):
 
             res.append(room)
 
+        self.align_walls(res)
         self.walls_type(res)
 
         self.img = res
         self.desc = self.desc
         self.update_status(Stage.STATUS_SUCCEEDED)
+
+    def align_walls(self, res):
+        max_angle = 10
+        max_shift = 5
+        for room in res:
+            num_of_walls = len(room.walls)
+            new_walls = []
+            new_walls.append(room.walls[-1])
+            for i in range(0, num_of_walls):
+
+                prev_wall = room.walls[i].inner_part
+                curr_wall = new_walls[-1].inner_part
+
+                angle = prev_wall.angle_between(curr_wall)
+                shift = pow((pow(prev_wall.point_2.x - curr_wall.point_1.x, 2) +
+                             pow(prev_wall.point_2.y - curr_wall.point_1.y, 2)), 1 / 2)
+                if angle < max_angle or shift < max_shift:
+                    pos = Line(new_walls[-1].inner_part.point_1, room.walls[i].inner_part.point_2)
+                    wall = Wall(pos)
+                    new_walls[-1] = wall
+                else:
+                    new_walls.append(room.walls[i])
+            room.walls = new_walls
 
     def walls_type(self, res):
 
