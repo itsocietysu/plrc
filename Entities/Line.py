@@ -6,6 +6,8 @@ from Entities.Point import Point
 from shapely.geometry import LineString
 from shapely.geometry import Point as ShapelyPoint
 
+import numpy as np
+
 
 class Line:
     _type = 'line'
@@ -87,3 +89,12 @@ class Line:
                 return Line(inside_point, intersection)
 
         return None
+
+    def angle_between(self, line):
+        line1 = self
+        line2 = line
+        l1 = complex((line1.point_2.x - line1.point_1.x), (line1.point_2.y - line1.point_1.y))
+        l2 = complex((line2.point_2.x - line2.point_1.x), (line2.point_2.y - line2.point_1.y))
+        a1 = np.angle(l1, deg=True)
+        a2 = np.angle(l2, deg=True)
+        return abs(a1 - a2)
