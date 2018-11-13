@@ -1,4 +1,3 @@
-import sys
 
 from ImageProcessing.NewLoad import Load
 from ImageProcessing.Preprocessing import Preprocessing
@@ -13,14 +12,9 @@ from ImageProcessing.NewSave import Save
 from ImageProcessing.Pipeline import Pipeline
 
 
-def run():
+def run(image, graph):
     pipeline_steps = [Load, ObjectDetection, Preprocessing, Components, Contours, RoomConstructor, OpeningPlacement, Save]
 
-    pipeline = Pipeline(pipeline_steps, sys.argv[1], sys.argv[2], sys.argv[3], _verbose=False)
+    pipeline = Pipeline(pipeline_steps, _img=image, _graph=graph, _verbose=False)
     pipeline.process()
-    return desc_to_json(pipeline.desc)
-
-
-def desc_to_json(desc):
-    #аналогичная функция в Save
-    return None
+    return pipeline.desc

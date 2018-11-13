@@ -51,7 +51,10 @@ class ObjectDetection(Stage):
         labels = label_map_to_dict(load_label_map_file(self._label_map_location))
 
         tf.logging.set_verbosity(tf.logging.WARN)
-        graph = self.load_graph()
+        if not self.graph:
+            graph = self.load_graph()
+        else:
+            graph = self.graph
 
         (boxes, scores, classes, num) = self.proceed_with_boxes(graph)
 
