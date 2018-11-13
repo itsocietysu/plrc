@@ -7,6 +7,7 @@ import sys
 from Entities.Room import Room
 from Entities.Point import Point
 from Renderer.Render import render_room
+#from Renderer.Render import define_wall_sizes
 
 H = 1000
 W = 1000
@@ -29,6 +30,7 @@ if __name__ == '__main__':
     scale = 1.0
     if len(sys.argv) == 3:
         scale = float(sys.argv[2])
+    #img = cv2.imread('./res/' + sys.argv[1].split('/')[2] + '.png')
 
     x0, y0, x1, y1 = 10000, 10000, 0, 0
     for _ in rooms:
@@ -44,7 +46,7 @@ if __name__ == '__main__':
     img = np.zeros((int(y1 + SHIFT), int(x1 + SHIFT), 3), np.uint8)
 
     for _ in rooms:
-        render_room(img, _, line_w=2, shift=Point(0, 0), scale=scale)
+        render_room(img, _, line_w=1, shift=Point(0, 0), scale=scale)
 
     #cv2.imshow('res', define_wall_sizes(img))
     cv2.imshow('res', img)

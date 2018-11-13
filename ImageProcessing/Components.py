@@ -9,6 +9,7 @@ class Components(Stage):
     _name = 'components'
 
     MIN_FILL_RATE = 0.45
+    
     ASPECT_RATIO = 5.0
     CONNECTIVITY = 4
     ERODE_KERNEL = np.ones((25, 25), np.uint8)
@@ -41,7 +42,7 @@ class Components(Stage):
 
             ratio = float(output[2][i][2]) / float(output[2][i][3])
             if ratio <= 0.0 or Components.ASPECT_RATIO <= ratio or Components.ASPECT_RATIO <= (1.0 / ratio):
-               continue
+                continue
 
             valuable_components.append(i)
 

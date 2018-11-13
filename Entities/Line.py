@@ -90,6 +90,14 @@ class Line:
 
         return None
 
+    def is_point_of_line(self, point):
+        intersection = LineString([(self.point_1.x, self.point_1.y),
+                                   (self.point_2.x, self.point_2.y)]).intersection(ShapelyPoint(point.x, point.y))
+        if type(intersection) == ShapelyPoint:
+            return Point(intersection.x, intersection.y)
+
+        return None
+
     def angle_between(self, line):
         line1 = self
         line2 = line
@@ -98,3 +106,6 @@ class Line:
         a1 = np.angle(l1, deg=True)
         a2 = np.angle(l2, deg=True)
         return abs(a1 - a2)
+
+#if __name__ == '__main__':
+#    print(Line(Point(0, 0), Point(1, 1)).angle_between(Line(Point(1, 1), Point(2.5, 1.5))))

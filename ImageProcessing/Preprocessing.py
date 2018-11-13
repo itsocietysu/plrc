@@ -5,7 +5,7 @@ from ImageProcessing.Stage import Stage
 
 """Binarize image and remove basical noize"""
 class Preprocessing(Stage):
-    _name = 'proprocessing'
+    _name = 'preprocessing'
 
     GAUSS_CORE = (5, 5)
     def __init__(self):

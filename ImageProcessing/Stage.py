@@ -14,9 +14,10 @@ class Stage:
         self.img = None
         self.desc = None
 
-    def pass_data(self, img, desc):
+    def pass_data(self, img, desc, parameters_file):
         self.img = img
         self.desc = desc
+        self.parameters_file = parameters_file
         self.status = 'initial'
 
     def process(self, parent):
