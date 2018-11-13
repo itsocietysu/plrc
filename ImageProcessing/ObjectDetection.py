@@ -10,10 +10,8 @@ from Entities.Window import Window
 from Entities.Line import Line
 from Entities.Point import Point
 from Entities.Item import Item
-from Entities.Arch import Arch
 
 from Utils.label_map_reader import *
-
 
 """Upload processing data"""
 class ObjectDetection(Stage):
@@ -45,39 +43,6 @@ class ObjectDetection(Stage):
 
             return s.run([detection_boxes, detection_scores, detection_classes, num_detections],
                   feed_dict={image_tensor: img_np})
-
-    def choose_objects(self, image):
-        chosen_start = False
-        chosen_end = False
-        chosen_once = False
-        color = (0, 255, 255)
-        arches = []
-
-        def callback_func(event, x, y, flags, userdata):
-            global sx, sy, ex, ey, chosen_start, chosen_end, chosen_once
-
-            if event == cv2.EVENT_LBUTTONDOWN:
-                sx, sy = x, y
-                chosen_start = True
-
-            elif event == cv2.EVENT_LBUTTONUP:
-                ex, ey = x, y
-                chosen_end = True
-                chosen_once = True
-
-            if chosen_start and chosen_end:
-                if chosen_once:
-                    cv2.line(image, (sx, sy), (ex, ey), color, 2)
-                    arches.append(((sx, sy), (ex, ey)))
-                    cv2.imshow('choose arches', image)
-                    chosen_once = False
-
-        cv2.namedWindow('choose arches')
-        cv2.setMouseCallback('choose arches', callback_func)
-        cv2.imshow('choose arches', image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        return arches
 
     def process(self, parent):
         """load the data"""
@@ -122,12 +87,6 @@ class ObjectDetection(Stage):
             t = cl[1]
             cl = cl[0]
             room.openings.append(cl(placement, t=t))
-
-        arches = self.choose_objects(self.img)
-        for arch in arches:
-            room.openings.append(Arch(Line(Point(arch[0][0], arch[0][1]),
-                                           Point(arch[1][0], arch[1][1]))))
-
         self.desc = room
 
         self.update_status(Stage.STATUS_SUCCEEDED)

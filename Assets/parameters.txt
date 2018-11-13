@@ -1,0 +1,9 @@
+#wall x y size
+0
+0
+45
+#arches x1 y1 x2 y2
+0
+0
+5
+5
