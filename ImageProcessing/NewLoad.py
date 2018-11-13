@@ -18,5 +18,6 @@ class Load(Stage):
         parent.width = self.img.shape[1]
         parent.height = self.img.shape[0]
         parent.graph = self.graph
+        parent.label_map = self.label_map
 
         self.update_status(Stage.STATUS_SUCCEEDED)

@@ -48,7 +48,10 @@ class ObjectDetection(Stage):
         """load the data"""
         self.update_status(Stage.STATUS_RUNNING)
 
-        labels = label_map_to_dict(load_label_map_file(self._label_map_location))
+        if self.label_map:
+            labels = self.label_map
+        else:
+            labels = label_map_to_dict(load_label_map_file(self._label_map_location))
 
         tf.logging.set_verbosity(tf.logging.WARN)
         if not self.graph:
