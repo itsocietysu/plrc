@@ -2,7 +2,7 @@ import cv2
 from ImageProcessing.Stage import Stage
 
 class Pipeline:
-    def __init__(self, _pipeline=[], _img=None, _desc=None, parameters=None, _verbose=False):
+    def __init__(self, _pipeline=[], _img=None, _desc=None, parameters=None, _graph=None, _verbose=False):
         self.pipeline = _pipeline
         self.img = _img
         self.desc = _desc
@@ -11,6 +11,7 @@ class Pipeline:
         self.height = None
         self.out_dir = None
         self.parameters_file = parameters
+        self.graph = _graph
 
     def process(self):
         for stage in self.pipeline:
