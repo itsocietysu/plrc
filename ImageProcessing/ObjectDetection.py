@@ -1,6 +1,5 @@
 import tensorflow as tf
 import numpy as np
-import cv2
 
 from ImageProcessing.Stage import Stage
 
@@ -54,10 +53,11 @@ class ObjectDetection(Stage):
             labels = label_map_to_dict(load_label_map_file(self._label_map_location))
 
         tf.logging.set_verbosity(tf.logging.WARN)
-        if not self.graph:
-            graph = self.load_graph()
-        else:
+
+        if self.graph:
             graph = self.graph
+        else:
+            graph = self.load_graph()
 
         (boxes, scores, classes, num) = self.proceed_with_boxes(graph)
 

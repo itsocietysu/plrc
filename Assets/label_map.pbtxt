@@ -12,3 +12,13 @@ item {
   id: 3
   name: 'window'
 }
+
+item {
+  id: 4
+  name: 'vent_channel'
+}
+
+item {
+  id: 5
+  name: 'water_pipes'
+}
