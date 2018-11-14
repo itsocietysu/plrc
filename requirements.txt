@@ -2,5 +2,4 @@ opencv-python
 bottle
 numpy
 tensorflow
-opencv
 shapely
