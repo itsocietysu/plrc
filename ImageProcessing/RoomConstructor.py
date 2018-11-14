@@ -108,16 +108,16 @@ class RoomConstructor(Stage):
             size = f[3]
             wall = self.choose_wall(res, point)
 
-        if wall:
-            w = wall.inner_part
-            wall_len = pow(pow((w.point_2.x - w.point_1.x), 2) + pow((w.point_2.y - w.point_1.y), 2), 1 / 2)
-            pix_to_m = size / wall_len
-            for room in res:
-                for wall in room.walls:
-                    p1 = wall.inner_part.point_1
-                    p2 = wall.inner_part.point_2
-                    wall_len = pow(pow((p2.x - p1.x), 2) + pow((p2.y - p1.y), 2), 1 / 2)
-                    wall.size = pix_to_m * wall_len
+            if wall:
+                w = wall.inner_part
+                wall_len = pow(pow((w.point_2.x - w.point_1.x), 2) + pow((w.point_2.y - w.point_1.y), 2), 1 / 2)
+                pix_to_m = size / wall_len
+                for room in res:
+                    for wall in room.walls:
+                        p1 = wall.inner_part.point_1
+                        p2 = wall.inner_part.point_2
+                        wall_len = pow(pow((p2.x - p1.x), 2) + pow((p2.y - p1.y), 2), 1 / 2)
+                        wall.size = pix_to_m * wall_len
 
     def add_arches(self, res):
         if self.parent.parameters_file:
