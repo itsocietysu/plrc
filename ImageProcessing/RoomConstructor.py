@@ -66,7 +66,7 @@ class RoomConstructor(Stage):
             res.append(room)
 
         self.align_walls(res)
-        #self.walls_type(res)
+        self.walls_type(res)
         self.choose_scale(res)
         self.add_arches(res)
 
@@ -82,7 +82,7 @@ class RoomConstructor(Stage):
         return None
 
     def align_walls(self, res):
-        max_angle = 20
+        max_angle = 5
         for room in res:
             num_of_walls = len(room.walls)
             new_walls = []
@@ -105,7 +105,7 @@ class RoomConstructor(Stage):
         if self.parent.parameters_file:
             f = self.parent.parameters_file
             point = Point(int(f[1]), int(f[2]))
-            size = f[3]
+            size = int(f[3])
             wall = self.choose_wall(res, point)
 
             if wall:
@@ -122,13 +122,16 @@ class RoomConstructor(Stage):
     def add_arches(self, res):
         if self.parent.parameters_file:
             f = self.parent.parameters_file
-            i = 5
-            line = Line(Point(f[i], f[i + 1]), Point(f[i + 2], f[i + 3]))
-            arch = Arch(line)
-            res[0].openings.append(arch)
-
+            if len(f) > 5:
+                i = 5
+                line = Line(Point(f[i], f[i + 1]), Point(f[i + 2], f[i + 3]))
+                arch = Arch(line)
+                res[0].openings.append(arch)
+            else:
+                return None
         else:
             return None
+
     """For detecting wall types"""
     def walls_type(self, res):
 
