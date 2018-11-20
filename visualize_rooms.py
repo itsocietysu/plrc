@@ -18,7 +18,7 @@ img = np.zeros((H, W, 3), np.uint8)
 def read_apartments(path):
     files = os.listdir(path)
     input_tags = []
-    for _ in filter(lambda x: x != 'all_in_one.json', files):
+    for _ in filter(lambda x: x != 'all_in_one.json' and x[-5:] == '.json', files):
         with open('%s%s' % (path, _)) as fp:
             nl = json.load(fp)
             input_tags.append(nl)
