@@ -41,17 +41,19 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
             p2 = wall.inner_part.point_2.mult(scale).add(shift).int_tuple()
 
             cv2.line(img, p1, p2, tc(COLOR_MAP['bearing_wall']), line_w)
+            #point = (int(p1[0] + (p2[0] - p1[0]) / 2), int(p1[1] + (p2[1] - p1[1]) / 2))
+            #cv2.putText(img, str(wall.size), point, cv2.FONT_HERSHEY_SIMPLEX, 0.3, tc(COLOR_MAP['bearing_wall']), 1, cv2.LINE_AA)
 
         for o in room.openings:
-            p1 = o.placement.point_1.mult(scale).add(shift).int_tuple()
-            p2 = o.placement.point_2.mult(scale).add(shift).int_tuple()
+            for p in o.placement:
+                p1 = p.point_1.mult(scale).add(shift).int_tuple()
+                p2 = p.point_2.mult(scale).add(shift).int_tuple()
 
-            if o._type == 'item':
-                continue
-                if o.item_type == 'test' or o.item_type == 'test2':
-                    continue
-                cv2.rectangle(img, p1, p2, tc(COLOR_MAP[o.item_type]), line_w)
-            else:
-                cv2.line(img, p1, p2, tc(COLOR_MAP[o._type]), line_w)
+                if o._type == 'item':
+                    if o.item_type == 'test' or o.item_type == 'test2':
+                        continue
+                    cv2.rectangle(img, p1, p2, tc(COLOR_MAP[o.item_type]), line_w)
+                else:
+                    cv2.line(img, p1, p2, tc(COLOR_MAP[o._type]), line_w)
 
     return img

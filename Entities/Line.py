@@ -66,16 +66,8 @@ class Line:
         point1_inside = is_point_inside_rectangle(segment.point_1)
         point2_inside = is_point_inside_rectangle(segment.point_2)
 
-        if not point1_inside and not point2_inside:
-            return None
-
         if point1_inside and point2_inside:
             return segment
-
-        if point1_inside:
-            inside_point = segment.point_1
-        if point2_inside:
-            inside_point = segment.point_2
 
         p1 = rect.point_1
         p2 = rect.point_2
@@ -83,11 +75,31 @@ class Line:
         p = [Point(p1.x, p1.y), Point(p1.x, p2.y), Point(p2.x, p2.y), Point(p2.x, p1.y)]
         lines_rect = [Line(p[0], p[1]), Line(p[1], p[2]), Line(p[2], p[3]), Line(p[3], p[0])]
 
+        if not point1_inside and not point2_inside:
+
+            intersection_segment = Line()
+            for line in lines_rect:
+                intersection = segment.segment_intersection(line)
+                if type(intersection) == Point:
+                    if not intersection_segment.point_1:
+                        intersection_segment.point_1 = intersection
+                    else:
+                        intersection_segment.point_2 = intersection
+                if intersection_segment.point_1 and intersection_segment.point_2:
+                    return intersection_segment
+
+            return None
+
+        if point1_inside:
+            inside_point = segment.point_1
+
+        if point2_inside:
+            inside_point = segment.point_2
+
         for line in lines_rect:
             intersection = segment.segment_intersection(line)
             if type(intersection) == Point:
                 return Line(inside_point, intersection)
-
         return None
 
     def is_point_of_line(self, point):

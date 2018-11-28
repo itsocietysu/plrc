@@ -65,21 +65,21 @@ class ObjectDetection(Stage):
         room = Room()
 
         choice = {
-            'door': [Door, None],
-            'window': [Window, None],
+            'door':         [Door, None],
+            'window':       [Window, None],
             'balcony_door': [Door, None],
             'vent_channel': [Item, 'vent_channel'],
-            'water_pipes': [Item, 'water_pipes'],
-            'toilet': [Item, 'toilet'],
-            'bathroom': [Item, 'bathroom'],
+            'water_pipes':  [Item, 'water_pipes'],
+            'toilet':       [Item, 'toilet'],
+            'bathroom':     [Item, 'bathroom'],
             'shower_cabin': [Item, 'shower_cabin'],
-            'sink': [Item, 'sink'],
+            'sink':         [Item, 'sink'],
             'kitchen_sink': [Item, 'kitchen_sink'],
-            'stove': [Item, 'stove'],
-            'washer': [Item, 'washer'],
-            'test': [Item, 'test'],
-            'test2': [Item, 'test2'],
-            'storeroom': [Item, 'storeroom']
+            'stove':        [Item, 'stove'],
+            'washer':       [Item, 'washer'],
+            'test':         [Item, 'test'],
+            'test2':        [Item, 'test2'],
+            'storeroom':    [Item, 'storeroom']
         }
 
         for i in range(int(num[0])):
