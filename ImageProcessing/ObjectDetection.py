@@ -1,6 +1,5 @@
 import tensorflow as tf
 import numpy as np
-import cv2
 
 from ImageProcessing.Stage import Stage
 
@@ -54,10 +53,11 @@ class ObjectDetection(Stage):
             labels = label_map_to_dict(load_label_map_file(self._label_map_location))
 
         tf.logging.set_verbosity(tf.logging.WARN)
-        if not self.graph:
-            graph = self.load_graph()
-        else:
+
+        if self.graph:
             graph = self.graph
+        else:
+            graph = self.load_graph()
 
         (boxes, scores, classes, num) = self.proceed_with_boxes(graph)
 
@@ -65,21 +65,21 @@ class ObjectDetection(Stage):
         room = Room()
 
         choice = {
-            'door': [Door, None],
-            'window': [Window, None],
+            'door':         [Door, None],
+            'window':       [Window, None],
             'balcony_door': [Door, None],
             'vent_channel': [Item, 'vent_channel'],
-            'water_pipes': [Item, 'water_pipes'],
-            'toilet': [Item, 'toilet'],
-            'bathroom': [Item, 'bathroom'],
+            'water_pipes':  [Item, 'water_pipes'],
+            'toilet':       [Item, 'toilet'],
+            'bathroom':     [Item, 'bathroom'],
             'shower_cabin': [Item, 'shower_cabin'],
-            'sink': [Item, 'sink'],
+            'sink':         [Item, 'sink'],
             'kitchen_sink': [Item, 'kitchen_sink'],
-            'stove': [Item, 'stove'],
-            'washer': [Item, 'washer'],
-            'test': [Item, 'test'],
-            'test2': [Item, 'test2'],
-            'storeroom': [Item, 'storeroom']
+            'stove':        [Item, 'stove'],
+            'washer':       [Item, 'washer'],
+            'test':         [Item, 'test'],
+            'test2':        [Item, 'test2'],
+            'storeroom':    [Item, 'storeroom']
         }
 
         for i in range(int(num[0])):

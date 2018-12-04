@@ -17,7 +17,7 @@ class Pipeline:
     def process(self):
         for stage in self.pipeline:
             _ = stage()
-            _.pass_data(self.img, self.desc, self.parameters_file)
+            _.pass_data(self.img, self.desc, self.parameters_file, self.graph, self.label_map)
             _.process(self)
 
             if _.status == Stage.STATUS_SUCCEEDED:

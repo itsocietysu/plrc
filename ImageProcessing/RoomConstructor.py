@@ -5,13 +5,10 @@ from Entities.Room import Room
 from Entities.Wall import Wall
 from Entities.Line import Line
 from Entities.Point import Point
-from Entities.Arch import Arch
 
 from ImageProcessing.Stage import Stage
 
 from Entities.Wall import WALL_TYPE_MAP
-
-
 WALL_MAP = {
             'space':        0,
             'wall':         1,
@@ -35,8 +32,9 @@ class RoomConstructor(Stage):
 
     def process(self, parent):
         """smooth the data"""
-        self.parent = parent
-        self.TH = 100 / min(parent.height, parent.width)
+        self.TH = 0.1
+        if parent.height < 1000 and parent.width < 1000:
+            self.TH = 0.25
         self.WALL_DIFF = 0.000001 * max(parent.height, parent.width)
         self.R_OUTER_WALL = int(0.2 * min(parent.width, parent.height))
         self.R_BEARING_WALL = int(self.R_OUTER_WALL / 8)
@@ -65,71 +63,12 @@ class RoomConstructor(Stage):
 
             res.append(room)
 
-        self.align_walls(res)
-        #self.walls_type(res)
-        self.choose_scale(res)
-        self.add_arches(res)
+        self.walls_type(res)
 
         self.img = res
         self.desc = self.desc
         self.update_status(Stage.STATUS_SUCCEEDED)
 
-    def choose_wall(self, res, point):
-        for _ in res:
-            for wall in _.walls:
-                if wall.inner_part.is_point_of_line(point):
-                    return wall
-        return None
-
-    def align_walls(self, res):
-        max_angle = 20
-        for room in res:
-            num_of_walls = len(room.walls)
-            new_walls = []
-            new_walls.append(room.walls[-1])
-            for i in range(0, num_of_walls):
-
-                prev_wall = room.walls[i].inner_part
-                curr_wall = new_walls[-1].inner_part
-
-                angle = prev_wall.angle_between(curr_wall)
-                if angle < max_angle:
-                    pos = Line(new_walls[-1].inner_part.point_1, room.walls[i].inner_part.point_2)
-                    wall = Wall(pos)
-                    new_walls[-1] = wall
-                else:
-                    new_walls.append(room.walls[i])
-            room.walls = new_walls
-
-    def choose_scale(self, res):
-        if self.parent.parameters_file:
-            f = self.parent.parameters_file
-            point = Point(int(f[1]), int(f[2]))
-            size = f[3]
-            wall = self.choose_wall(res, point)
-
-        if wall:
-            w = wall.inner_part
-            wall_len = pow(pow((w.point_2.x - w.point_1.x), 2) + pow((w.point_2.y - w.point_1.y), 2), 1 / 2)
-            pix_to_m = size / wall_len
-            for room in res:
-                for wall in room.walls:
-                    p1 = wall.inner_part.point_1
-                    p2 = wall.inner_part.point_2
-                    wall_len = pow(pow((p2.x - p1.x), 2) + pow((p2.y - p1.y), 2), 1 / 2)
-                    wall.size = pix_to_m * wall_len
-
-    def add_arches(self, res):
-        if self.parent.parameters_file:
-            f = self.parent.parameters_file
-            i = 5
-            line = Line(Point(f[i], f[i + 1]), Point(f[i + 2], f[i + 3]))
-            arch = Arch(line)
-            res[0].openings.append(arch)
-
-        else:
-            return None
-    """For detecting wall types"""
     def walls_type(self, res):
 
         def define_type():
@@ -167,10 +106,10 @@ class RoomConstructor(Stage):
         img = cv2.bitwise_not(img)
 
         dt = cv2.distanceTransform(img, cv2.DIST_L2, 3)
-        mask = cv2.normalize(dt, dt, 0, 10., cv2.NORM_MINMAX)
+        mask = cv2.normalize(dt, dt, 0, 1., cv2.NORM_MINMAX)
 
         outer_walls_mask = np.copy(mask)
-        r, outer_walls = cv2.threshold(outer_walls_mask, self.TH * 10, 1, cv2.THRESH_BINARY)
+        r, outer_walls = cv2.threshold(outer_walls_mask, self.TH, 1, cv2.THRESH_BINARY)
         outer_walls_mask[outer_walls == 1] = 0
 
         wall_map = self.create_wall_map(outer_walls_mask)
@@ -234,11 +173,11 @@ class RoomConstructor(Stage):
     def classificate_walls(self, local_maxima):
 
         def classificate(local_max):
-            max_difference = self.WALL_DIFF
+            max_difference = 0
             ind_max_difference = len(local_max) - 1
             for i in range(len(local_max) - 1):
                 difference = local_max[i + 1] - local_max[i]
-                if difference > max_difference:
+                if difference > max_difference and difference > self.WALL_DIFF:
                     max_difference = difference
                     ind_max_difference = i + 1
             return ind_max_difference
