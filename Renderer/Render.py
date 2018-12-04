@@ -40,9 +40,10 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
             p1 = wall.inner_part.point_1.mult(scale).add(shift).int_tuple()
             p2 = wall.inner_part.point_2.mult(scale).add(shift).int_tuple()
 
-            cv2.line(img, p1, p2, tc(COLOR_MAP['bearing_wall']), line_w)
-            #point = (int(p1[0] + (p2[0] - p1[0]) / 2), int(p1[1] + (p2[1] - p1[1]) / 2))
-            #cv2.putText(img, str(wall.size), point, cv2.FONT_HERSHEY_SIMPLEX, 0.3, tc(COLOR_MAP['bearing_wall']), 1, cv2.LINE_AA)
+            cv2.line(img, p1, p2, tc(COLOR_MAP[wall.wall_type]), line_w)
+            if wall.size:
+                point = (int(p1[0] + (p2[0] - p1[0]) / 2), int(p1[1] + (p2[1] - p1[1]) / 2))
+                cv2.putText(img, str(wall.size), point, cv2.FONT_HERSHEY_SIMPLEX, 0.3, tc(COLOR_MAP[wall.wall_type]), 1, cv2.LINE_AA)
 
         for o in room.openings:
             for p in o.placement:

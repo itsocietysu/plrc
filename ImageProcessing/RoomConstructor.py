@@ -5,10 +5,10 @@ from Entities.Room import Room
 from Entities.Wall import Wall
 from Entities.Line import Line
 from Entities.Point import Point
+from Entities.Arch import Arch
 
 from ImageProcessing.Stage import Stage
 
-from Entities.Wall import WALL_TYPE_MAP
 WALL_MAP = {
             'space':        0,
             'wall':         1,
@@ -32,6 +32,7 @@ class RoomConstructor(Stage):
 
     def process(self, parent):
         """smooth the data"""
+        self.parent = parent
         self.TH = 0.1
         if parent.height < 1000 and parent.width < 1000:
             self.TH = 0.25
@@ -63,12 +64,74 @@ class RoomConstructor(Stage):
 
             res.append(room)
 
+        self.align_walls(res)
         self.walls_type(res)
+        self.choose_scale(res)
+        self.add_arches(res)
 
         self.img = res
         self.desc = self.desc
         self.update_status(Stage.STATUS_SUCCEEDED)
 
+    def choose_wall(self, res, point):
+        for _ in res:
+            for wall in _.walls:
+                if wall.inner_part.is_point_of_line(point):
+                    return wall
+        return None
+
+    def align_walls(self, res):
+        max_angle = 5
+        for room in res:
+            num_of_walls = len(room.walls)
+            new_walls = []
+            new_walls.append(room.walls[-1])
+            for i in range(0, num_of_walls):
+
+                prev_wall = room.walls[i].inner_part
+                curr_wall = new_walls[-1].inner_part
+
+                angle = prev_wall.angle_between(curr_wall)
+                if angle < max_angle:
+                    pos = Line(new_walls[-1].inner_part.point_1, room.walls[i].inner_part.point_2)
+                    wall = Wall(pos)
+                    new_walls[-1] = wall
+                else:
+                    new_walls.append(room.walls[i])
+            room.walls = new_walls
+
+    def choose_scale(self, res):
+        if self.parent.parameters_file:
+            f = self.parent.parameters_file
+            point = Point(int(f[1]), int(f[2]))
+            size = int(f[3])
+            wall = self.choose_wall(res, point)
+
+            if wall:
+                w = wall.inner_part
+                wall_len = pow(pow((w.point_2.x - w.point_1.x), 2) + pow((w.point_2.y - w.point_1.y), 2), 1 / 2)
+                pix_to_m = size / wall_len
+                for room in res:
+                    for wall in room.walls:
+                        p1 = wall.inner_part.point_1
+                        p2 = wall.inner_part.point_2
+                        wall_len = pow(pow((p2.x - p1.x), 2) + pow((p2.y - p1.y), 2), 1 / 2)
+                        wall.size = pix_to_m * wall_len
+
+    def add_arches(self, res):
+        if self.parent.parameters_file:
+            f = self.parent.parameters_file
+            if len(f) > 5:
+                i = 5
+                line = Line(Point(f[i], f[i + 1]), Point(f[i + 2], f[i + 3]))
+                arch = Arch(line)
+                res[0].openings.append(arch)
+            else:
+                return None
+        else:
+            return None
+
+    """For detecting wall types"""
     def walls_type(self, res):
 
         def define_type():
@@ -91,13 +154,13 @@ class RoomConstructor(Stage):
             w_max = max(not_bearing, bearing, outer)
             if w_max != 0:
                 if w_max == outer:
-                    return WALL_TYPE_MAP['outer_wall']
+                    return Wall.WALL_TYPE_MAP['outer_wall']
                 if w_max == bearing:
-                    return WALL_TYPE_MAP['bearing_wall']
+                    return Wall.WALL_TYPE_MAP['bearing_wall']
                 if w_max == not_bearing:
-                    return WALL_TYPE_MAP['wall']
+                    return Wall.WALL_TYPE_MAP['wall']
 
-            return WALL_TYPE_MAP['none']
+            return Wall.WALL_TYPE_MAP['none']
 
         img = self.fill_rooms(res)
 

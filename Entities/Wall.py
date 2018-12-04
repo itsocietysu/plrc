@@ -2,16 +2,14 @@ from collections import OrderedDict
 
 from Entities.Line import Line
 
-WALL_TYPE_MAP = {
-    'wall':         'wall',
-    'bearing_wall': 'bearing_wall',
-    'outer_wall':   'outer_wall',
-    'none': 'none'
-}
-
-
 class Wall:
     _type = 'wall'
+    WALL_TYPE_MAP = {
+        'wall': 'wall',
+        'bearing_wall': 'bearing_wall',
+        'outer_wall': 'outer_wall',
+        'none': 'none'
+    }
 
     def __init__(self, _inner_part=None, _outer_part=None):
         self.inner_part = _inner_part
@@ -20,6 +18,7 @@ class Wall:
 
         self.outer_part = _outer_part
         self.wall_type = None
+        self.size = None
 
     def to_dict(self):
         return OrderedDict([('type', self._type),
