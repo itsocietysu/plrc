@@ -4,13 +4,14 @@ from ImageProcessing.Stage import Stage
 import copy
 import math
 from Entities.Point import Point
+SIZE = 20
 
 FURNITURE_TYPE_MAP = {
-    'kitchen_sink': Line(Point(0, 0), Point(100, 100)),
-    'dishwasher': Line(Point(0, 0), Point(100, 100)),
-    'washer': Line(Point(0, 0), Point(100, 100)),
-    'refrigerator': Line(Point(0, 0), Point(100, 100)),
-    'stove': Line(Point(0, 0), Point(80, 100)),
+    'kitchen_sink': Line(Point(0, 0), Point(SIZE, SIZE)),
+    'dishwasher': Line(Point(0, 0), Point(SIZE, SIZE)),
+    'washer': Line(Point(0, 0), Point(SIZE, SIZE)),
+    'refrigerator': Line(Point(0, 0), Point(SIZE, SIZE)),
+    'stove': Line(Point(0, 0), Point(SIZE, SIZE)),
 }
 # 9 направлений
 FURNITURE_ORIENTATION_MAP = {
@@ -68,7 +69,7 @@ def simple_placement(furniture, start_point, placement_orientation, len_x, len_y
 '''
 
 
-def place_furniture(furniture, room):
+def place_furniture(furniture, room, point):
     walls = room.walls
     delta = 3
     min_wall_len = 473
@@ -88,7 +89,7 @@ def place_furniture(furniture, room):
             angles.append(cur_wall.inner_part.point_2)
 
     '''Взятие NW угла'''
-    nw_angle = Point(angles[0].x, angles[0].y)
+    nw_angle = point#Point(angles[0].x, angles[0].y)
     for a in angles:
         nw_angle.x = min(nw_angle.x, a.x)
         nw_angle.y = min(nw_angle.y, a.y)
@@ -179,6 +180,11 @@ class FurniturePlacement(Stage):
 
     def process(self, parent):
         """smooth the data"""
+
+        if parent.parameters_file:
+            f = parent.parameters_file
+            point = Point(int(f[1]), int(f[2]))
+
         res = []
         furniture = []
         for i, room in enumerate(self.desc):
@@ -191,7 +197,7 @@ class FurniturePlacement(Stage):
                     Furniture(FURNITURE_TYPE_MAP['stove'], FURNITURE_ORIENTATION_MAP['north'], 'stove'),
                     Furniture(FURNITURE_TYPE_MAP['refrigerator'], FURNITURE_ORIENTATION_MAP['north'], 'refrigerator')]
 
-                furniture = place_furniture(furniture, new_room)
+                furniture = place_furniture(furniture, new_room, point)
             if furniture:
                 for f in furniture:
                     new_room.furniture.append(f)

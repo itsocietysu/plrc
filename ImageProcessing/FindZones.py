@@ -1,9 +1,7 @@
 import copy
 import math
-import numpy as np
 from ImageProcessing.Stage import Stage
 from Entities.Point import Point
-from Entities.Line import Line
 from Entities.Zone import Zone
 
 

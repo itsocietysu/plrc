@@ -1,4 +1,4 @@
-#wall x y size
+#wall x y size and start algorithm
 0
 0
 45
