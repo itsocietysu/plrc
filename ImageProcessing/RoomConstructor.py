@@ -9,9 +9,6 @@ from Entities.Arch import Arch
 
 from ImageProcessing.Stage import Stage
 
-from Entities.Wall import WALL_TYPE_MAP
-
-
 WALL_MAP = {
             'space':        0,
             'wall':         1,
@@ -36,7 +33,9 @@ class RoomConstructor(Stage):
     def process(self, parent):
         """smooth the data"""
         self.parent = parent
-        self.TH = 100 / min(parent.height, parent.width)
+        self.TH = 0.1
+        if parent.height < 1000 and parent.width < 1000:
+            self.TH = 0.25
         self.WALL_DIFF = 0.000001 * max(parent.height, parent.width)
         self.R_OUTER_WALL = int(0.2 * min(parent.width, parent.height))
         self.R_BEARING_WALL = int(self.R_OUTER_WALL / 8)
@@ -155,13 +154,13 @@ class RoomConstructor(Stage):
             w_max = max(not_bearing, bearing, outer)
             if w_max != 0:
                 if w_max == outer:
-                    return WALL_TYPE_MAP['outer_wall']
+                    return Wall.WALL_TYPE_MAP['outer_wall']
                 if w_max == bearing:
-                    return WALL_TYPE_MAP['bearing_wall']
+                    return Wall.WALL_TYPE_MAP['bearing_wall']
                 if w_max == not_bearing:
-                    return WALL_TYPE_MAP['wall']
+                    return Wall.WALL_TYPE_MAP['wall']
 
-            return WALL_TYPE_MAP['none']
+            return Wall.WALL_TYPE_MAP['none']
 
         img = self.fill_rooms(res)
 
@@ -170,10 +169,10 @@ class RoomConstructor(Stage):
         img = cv2.bitwise_not(img)
 
         dt = cv2.distanceTransform(img, cv2.DIST_L2, 3)
-        mask = cv2.normalize(dt, dt, 0, 10., cv2.NORM_MINMAX)
+        mask = cv2.normalize(dt, dt, 0, 1., cv2.NORM_MINMAX)
 
         outer_walls_mask = np.copy(mask)
-        r, outer_walls = cv2.threshold(outer_walls_mask, self.TH * 10, 1, cv2.THRESH_BINARY)
+        r, outer_walls = cv2.threshold(outer_walls_mask, self.TH, 1, cv2.THRESH_BINARY)
         outer_walls_mask[outer_walls == 1] = 0
 
         wall_map = self.create_wall_map(outer_walls_mask)
@@ -237,11 +236,11 @@ class RoomConstructor(Stage):
     def classificate_walls(self, local_maxima):
 
         def classificate(local_max):
-            max_difference = self.WALL_DIFF
+            max_difference = 0
             ind_max_difference = len(local_max) - 1
             for i in range(len(local_max) - 1):
                 difference = local_max[i + 1] - local_max[i]
-                if difference > max_difference:
+                if difference > max_difference and difference > self.WALL_DIFF:
                     max_difference = difference
                     ind_max_difference = i + 1
             return ind_max_difference

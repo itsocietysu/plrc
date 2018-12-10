@@ -5,6 +5,7 @@ from Entities.Wall import Wall
 from Entities.Door import Door
 from Entities.Window import Window
 from Entities.Item import Item
+
 from Entities.Arch import Arch
 from Entities.Zone import Zone
 
@@ -16,9 +17,11 @@ class Room:
         'door': lambda _: Door().from_dict(_),
         'wall': lambda _: Wall().from_dict(_),
         'item': lambda _: Item().from_dict(_),
+
         'arch': lambda _: Arch().from_dict(_),
         'furniture': lambda _: Furniture().from_dict(_),
         'zone': lambda _: Zone().from_dict(_)
+
     }
 
     def __init__(self, _walls=[], _openings=[], _furniture=[], _zones=[]):
