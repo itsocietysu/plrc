@@ -3,6 +3,7 @@ import math
 from ImageProcessing.Stage import Stage
 from Entities.Point import Point
 from Entities.Zone import Zone
+from Entities.Line import Line
 
 
 class FindZones(Stage):
@@ -62,72 +63,76 @@ class FindZones(Stage):
 
         for idx, o in enumerate(openings):
             if o._type == 'door':
+                if len(o.placement):
+                    placement = Line(o.placement[0].point_1, o.placement[-1].point_2)
+                else:
+                    continue
                 z1 = Zone()
                 z2 = Zone()
                 delta = 3
                 shift = 60
                 # down
-                if (math.fabs(o.placement.point_1.y - o.placement.point_2.y) < delta) and \
-                        (o.placement.point_1.x < o.placement.point_2.x):
-                    z1.points.append(o.placement.point_1)
-                    z1.points.append(o.placement.point_2)
-                    z1.points.append(Point(o.placement.point_2.x, o.placement.point_2.y + shift))
-                    z1.points.append(Point(o.placement.point_1.x, o.placement.point_1.y + shift))
+                if (math.fabs(placement.point_1.y - placement.point_2.y) < delta) and \
+                        (placement.point_1.x < placement.point_2.x):
+                    z1.points.append(placement.point_1)
+                    z1.points.append(placement.point_2)
+                    z1.points.append(Point(placement.point_2.x, placement.point_2.y + shift))
+                    z1.points.append(Point(placement.point_1.x, placement.point_1.y + shift))
                     z1.zone_type = 'bad_zone'
 
-                    z2.points.append(o.placement.point_1)
-                    z2.points.append(o.placement.point_2)
-                    z2.points.append(Point(o.placement.point_2.x, o.placement.point_2.y - shift))
-                    z2.points.append(Point(o.placement.point_1.x, o.placement.point_1.y - shift))
+                    z2.points.append(placement.point_1)
+                    z2.points.append(placement.point_2)
+                    z2.points.append(Point(placement.point_2.x, placement.point_2.y - shift))
+                    z2.points.append(Point(placement.point_1.x, placement.point_1.y - shift))
                     z2.zone_type = 'bad_zone'
 
                     zones.append(z1)
                     zones.append(z2)
 
                 # up
-                if (math.fabs(o.placement.point_1.y - o.placement.point_2.y) < delta) and \
-                        (o.placement.point_1.x > o.placement.point_2.x):
-                    z1.points.append(o.placement.point_1)
-                    z1.points.append(o.placement.point_2)
-                    z1.points.append(Point(o.placement.point_2.x, o.placement.point_2.y - shift))
-                    z1.points.append(Point(o.placement.point_1.x, o.placement.point_1.y - shift))
+                if (math.fabs(placement.point_1.y - placement.point_2.y) < delta) and \
+                        (placement.point_1.x > placement.point_2.x):
+                    z1.points.append(placement.point_1)
+                    z1.points.append(placement.point_2)
+                    z1.points.append(Point(placement.point_2.x, placement.point_2.y - shift))
+                    z1.points.append(Point(placement.point_1.x, placement.point_1.y - shift))
                     z1.zone_type = 'bad_zone'
 
-                    z2.points.append(o.placement.point_1)
-                    z2.points.append(o.placement.point_2)
-                    z2.points.append(Point(o.placement.point_2.x, o.placement.point_2.y + shift))
-                    z2.points.append(Point(o.placement.point_1.x, o.placement.point_1.y + shift))
+                    z2.points.append(placement.point_1)
+                    z2.points.append(placement.point_2)
+                    z2.points.append(Point(placement.point_2.x, placement.point_2.y + shift))
+                    z2.points.append(Point(placement.point_1.x, placement.point_1.y + shift))
                     z2.zone_type = 'bad_zone'
                     zones.append(z1)
                     zones.append(z2)
                 # left
-                if (o.placement.point_1.y < o.placement.point_2.y) and \
-                        (math.fabs(o.placement.point_1.x - o.placement.point_2.x) < delta):
-                    z1.points.append(o.placement.point_1)
-                    z1.points.append(o.placement.point_2)
-                    z1.points.append(Point(o.placement.point_2.x + shift, o.placement.point_2.y))
-                    z1.points.append(Point(o.placement.point_1.x + shift, o.placement.point_1.y))
+                if (placement.point_1.y < placement.point_2.y) and \
+                        (math.fabs(placement.point_1.x - placement.point_2.x) < delta):
+                    z1.points.append(placement.point_1)
+                    z1.points.append(placement.point_2)
+                    z1.points.append(Point(placement.point_2.x + shift, placement.point_2.y))
+                    z1.points.append(Point(placement.point_1.x + shift, placement.point_1.y))
                     z1.zone_type = 'bad_zone'
 
-                    z2.points.append(o.placement.point_1)
-                    z2.points.append(o.placement.point_2)
-                    z2.points.append(Point(o.placement.point_2.x - shift, o.placement.point_2.y))
-                    z2.points.append(Point(o.placement.point_1.x - shift, o.placement.point_1.y))
+                    z2.points.append(placement.point_1)
+                    z2.points.append(placement.point_2)
+                    z2.points.append(Point(placement.point_2.x - shift, placement.point_2.y))
+                    z2.points.append(Point(placement.point_1.x - shift, placement.point_1.y))
                     z2.zone_type = 'bad_zone'
                     zones.append(z1)
                     zones.append(z2)
                 # right
-                if (o.placement.point_1.y > o.placement.point_2.y) and \
-                        (math.fabs(o.placement.point_1.x - o.placement.point_2.x) < delta):
-                    z1.points.append(o.placement.point_1)
-                    z1.points.append(o.placement.point_2)
-                    z1.points.append(Point(o.placement.point_2.x - shift, o.placement.point_2.y))
-                    z1.points.append(Point(o.placement.point_1.x - shift, o.placement.point_1.y))
+                if (placement.point_1.y > placement.point_2.y) and \
+                        (math.fabs(placement.point_1.x - placement.point_2.x) < delta):
+                    z1.points.append(placement.point_1)
+                    z1.points.append(placement.point_2)
+                    z1.points.append(Point(placement.point_2.x - shift, placement.point_2.y))
+                    z1.points.append(Point(placement.point_1.x - shift, placement.point_1.y))
                     z1.zone_type = 'bad_zone'
-                    z2.points.append(o.placement.point_1)
-                    z2.points.append(o.placement.point_2)
-                    z2.points.append(Point(o.placement.point_2.x + shift, o.placement.point_2.y))
-                    z2.points.append(Point(o.placement.point_1.x + shift, o.placement.point_1.y))
+                    z2.points.append(placement.point_1)
+                    z2.points.append(placement.point_2)
+                    z2.points.append(Point(placement.point_2.x + shift, placement.point_2.y))
+                    z2.points.append(Point(placement.point_1.x + shift, placement.point_1.y))
                     z2.zone_type = 'bad_zone'
                     zones.append(z1)
                     zones.append(z2)
