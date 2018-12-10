@@ -1,9 +1,14 @@
 from collections import OrderedDict
 
+from Entities.Furniture import Furniture
 from Entities.Wall import Wall
 from Entities.Door import Door
 from Entities.Window import Window
 from Entities.Item import Item
+
+from Entities.Arch import Arch
+from Entities.Zone import Zone
+
 
 class Room:
     _type = 'room'
@@ -12,18 +17,30 @@ class Room:
         'door': lambda _: Door().from_dict(_),
         'wall': lambda _: Wall().from_dict(_),
         'item': lambda _: Item().from_dict(_),
+
+        'arch': lambda _: Arch().from_dict(_),
+        'furniture': lambda _: Furniture().from_dict(_),
+        'zone': lambda _: Zone().from_dict(_)
+
     }
 
-    def __init__(self, _walls=[], _openings=[]):
+    def __init__(self, _walls=[], _openings=[], _furniture=[], _zones=[]):
         self.walls = _walls
         self.openings = _openings
+        self.furniture = _furniture
+        self.zones = _zones
 
     def to_dict(self):
         walls = [_.to_dict() for _ in self.walls]
         openings = [_.to_dict() for _ in self.openings]
+        zones = [_.to_dict() for _ in self.zones]
+
+        furniture = [_.to_dict() for _ in self.furniture]
 
         return OrderedDict([('walls', walls),
-                            ('openings', openings)])
+                            ('openings', openings),
+                            ('furniture', furniture),
+                            ('zones', zones)])
 
     def get_bounding_rect(self):
         sx, sy, ex, ey = 10000, 10000, 0, 0
@@ -38,9 +55,16 @@ class Room:
     def from_dict(self, obj):
 
         if 'walls' in obj:
-            self.walls    = [Room._processor_map[_['type']](_) for _ in obj['walls']    if _['type'] in Room._processor_map]
+            self.walls = [Room._processor_map[_['type']](_) for _ in obj['walls'] if _['type'] in Room._processor_map]
 
         if 'openings' in obj:
-            self.openings = [Room._processor_map[_['type']](_) for _ in obj['openings'] if _['type'] in Room._processor_map]
+            self.openings = [Room._processor_map[_['type']](_) for _ in obj['openings'] if
+                             _['type'] in Room._processor_map]
+        if 'furniture' in obj:
+            self.furniture = [Room._processor_map[_['type']](_) for _ in obj['furniture'] if
+                              _['type'] in Room._processor_map]
+        if 'zones' in obj:
+            self.zone = [Room._processor_map[_['type']](_) for _ in obj['zones'] if
+                              _['type'] in Room._processor_map]
 
         return self
