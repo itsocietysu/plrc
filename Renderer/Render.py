@@ -47,16 +47,16 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
             
 
         for o in room.openings:
-            p1 = o.placement.point_1.mult(scale).add(shift).int_tuple()
-            p2 = o.placement.point_2.mult(scale).add(shift).int_tuple()
+            for p in o.placement:
+                p1 = p.point_1.mult(scale).add(shift).int_tuple()
+                p2 = p.point_2.mult(scale).add(shift).int_tuple()
 
-            if o._type == 'item':
-                continue
-                if o.item_type == 'test' or o.item_type == 'test2':
-                    continue
-                cv2.rectangle(img, p1, p2, tc(COLOR_MAP[o.item_type]), line_w)
-            else:
-                cv2.line(img, p1, p2, tc(COLOR_MAP[o._type]), line_w)
+                if o._type == 'item':
+                    if o.item_type == 'test' or o.item_type == 'test2':
+                        continue
+                    cv2.rectangle(img, p1, p2, tc(COLOR_MAP[o.item_type]), line_w)
+                else:
+                    cv2.line(img, p1, p2, tc(COLOR_MAP[o._type]), line_w)
 
         for f in room.furniture:
             p1 = f.placement.point_1.mult(scale).add(shift).int_tuple()
