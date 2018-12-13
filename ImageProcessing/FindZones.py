@@ -28,12 +28,7 @@ class FindZones(Stage):
 
     def find_zones(self, room):
         zones = []
-        """
-           Идём по списку стен, рассматривая их попарно.
-           если в некоторый момент некоторое delta превышено,
-           то фиксируем точку поворота.
-           Доходим до состыковки с начальной точки, нулевая зона построена
-        """
+
         walls = room.walls
         openings = room.openings
         zone_0 = Zone()
@@ -54,12 +49,7 @@ class FindZones(Stage):
         if zone_0.points[0].x == zone_0.points[-1].x and zone_0.points[0].y == zone_0.points[-1].y:
             del zone_0.points[-1]
         zones.append(zone_0)
-        """
-           Проходим по всем openings.
-           Проверяем дверь или окно.
-           В зависимости от пред.шага отделяем зону.
-           Добавляем зону в zones
-        """
+
 
         for idx, o in enumerate(openings):
             if o._type == 'door':
@@ -136,8 +126,6 @@ class FindZones(Stage):
                     z2.zone_type = 'bad_zone'
                     zones.append(z1)
                     zones.append(z2)
-                """
-                   Итог: имеем массив зон, каждая из которых представлена списком точек.
-                """
+
 
         return zones

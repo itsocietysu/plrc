@@ -13,7 +13,7 @@ FURNITURE_TYPE_MAP = {
     'refrigerator': Line(Point(0, 0), Point(SIZE, SIZE)),
     'stove': Line(Point(0, 0), Point(SIZE, SIZE)),
 }
-# 9 направлений
+
 FURNITURE_ORIENTATION_MAP = {
     'north': Point(0, -1),
     'south': Point(0, 1),
@@ -31,10 +31,7 @@ def check_bad_zones():
     return
 
 
-'''
-start_point - точка от которой начинается расстановка
 
-'''
 
 
 def simple_placement(furniture, start_point, placement_orientation, len_x, len_y, delta=0):
@@ -62,11 +59,7 @@ def simple_placement(furniture, start_point, placement_orientation, len_x, len_y
     furniture.placement.point_2.y = p.y
 
 
-'''
-Необходимо добавить в качестве параметра start_point - точку, от которой начинается расстановка.
-Она определяется вводом пользователя или по стояку.
-    ] по умолчанию NW угол - start point
-'''
+
 
 
 def place_furniture(furniture, room, point):
@@ -75,7 +68,7 @@ def place_furniture(furniture, room, point):
     min_wall_len = 473
     angles = []
 
-    '''Выделение всех углов комнаты'''
+
     for idx, wall in enumerate(walls):
         # Definition of first wall
         cur_wall = wall
@@ -88,12 +81,12 @@ def place_furniture(furniture, room, point):
                  (math.fabs(cur_wall.inner_part.point_2.x - next_wall.inner_part.point_2.x) > delta)):
             angles.append(cur_wall.inner_part.point_2)
 
-    '''Взятие NW угла'''
+
     nw_angle = point#Point(angles[0].x, angles[0].y)
     for a in angles:
         nw_angle.x = min(nw_angle.x, a.x)
         nw_angle.y = min(nw_angle.y, a.y)
-    '''Взятие NE, SW углов'''
+
     ne_angle = Point()
     sw_angle = Point()
     for idx, a in enumerate(angles):
@@ -106,29 +99,29 @@ def place_furniture(furniture, room, point):
                 sw_angle = angles[(idx + 1) % len(angles)]
                 ne_angle = angles[(idx - 1) % len(angles)]
             break
-    '''Взятие SE угла'''
+
     se_angle = Point(0.0, 0.0)
     for a in angles:
         if a.x >= se_angle.x and a.y >= se_angle.y:
             se_angle.x = a.x
             se_angle.y = a.y
-    '''Вычисление длин сторон'''
-    len_x = math.fabs(nw_angle.x - ne_angle.x)  # длина по X
-    len_y = math.fabs(nw_angle.y - sw_angle.y)  # длина по Y
 
-    '''Выбор расстановки углом или по прямой'''
+    len_x = math.fabs(nw_angle.x - ne_angle.x)  #
+    len_y = math.fabs(nw_angle.y - sw_angle.y)  #
+
+
     if len_x >= min_wall_len and len_y >= min_wall_len:
-        '''Расстановка по прямой от выбранной начальной точки и с заданным направлением'''
+
         for f in furniture:
             simple_placement(f, nw_angle, FURNITURE_ORIENTATION_MAP['north-west'], len_x, len_y)
     else:
-        '''Расстановка углом'''
+
         furniture_len = 0
         shift = 100
         i = 0
         start_point = copy.deepcopy(nw_angle)
         if len_x >= len_y:
-            '''Вставляем сколько влезает по большей стене'''
+
             while i < len(furniture):
                 f = furniture[i]
                 furniture_len += f.placement.point_2.x
@@ -137,9 +130,9 @@ def place_furniture(furniture, room, point):
                     break
                 simple_placement(f, start_point, FURNITURE_ORIENTATION_MAP['south-east'], len_x, len_y)
                 i += 1
-            '''Добиваем остатки по второй стене в направлении перпендикулярном к заданному'''
+
             if i < len(furniture):
-                ''' Обновляем точку начала расстановки с учётом разметки'''
+
                 start_point.x = furniture[0].placement.point_1.x
                 start_point.y = furniture[0].placement.point_2.y + shift
                 while i < len(furniture):
@@ -156,12 +149,9 @@ def place_furniture(furniture, room, point):
                     break
                 simple_placement(f, nw_angle, FURNITURE_ORIENTATION_MAP['south-east'], len_x, len_y)
                 i += 1
-                '''Добиваем остатки по второй стене в направлении перепендикулярном к заданному'''
+
                 if i <= len(furniture):
-                    ''' Обновляем точку начала расстановки с учётом разметки'''
-                    ''' Рассматривается частный слай для NW угла'''
-                    '''В общем случае необходимо домножать на коэффициент, задающий направление вектора расстановки и 
-                    смещения'''
+
                     start_point.x = furniture[0].placement.point_1.x + shift
                     start_point.y = furniture[0].placement.point_2.y
                     while i < len(furniture):
