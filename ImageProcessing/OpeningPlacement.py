@@ -17,6 +17,7 @@ class OpeningPlacement(Stage):
 
     def process(self, parent):
         """smooth the data"""
+        self.parent = parent
         res = []
         for i, room in enumerate(self.img):
             new_room = copy.deepcopy(room)
@@ -47,6 +48,8 @@ class OpeningPlacement(Stage):
 
         if opening._type == 'item' or opening._type == 'arch':
             new_item.placement.append(rect)
+            if new_item.item_type == 'vent_channel' or new_item.item_type == 'water_pipes':
+                self.parent.plan.add_item(new_item)
 
         else:
             for wall in walls:

@@ -119,5 +119,12 @@ class Line:
         a2 = np.angle(l2, deg=True)
         return abs(a1 - a2)
 
+    def distance_to_point(self, point):
+        line = self
+        l = LineString( [(line.point_1.x, line.point_1.y), (line.point_2.x, line.point_2.y)] )
+        p = ShapelyPoint(point.x, point.y)
+        return l.distance(p)
+
+
 #if __name__ == '__main__':
-#    print(Line(Point(0, 0), Point(1, 1)).angle_between(Line(Point(1, 1), Point(2.5, 1.5))))
+#    print(Line(Point(0, 0), Point(1, 0)).distance_to_point(Point(1, 1)))

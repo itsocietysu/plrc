@@ -39,12 +39,19 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
         return c
 
     if room:
+        if room.type == 'kitchen':
+            wall = room.walls[0]
+            p1 = wall.inner_part.point_1.mult( scale ).add( shift ).int_tuple()
+            p2 = wall.inner_part.point_2.mult( scale ).add( shift ).int_tuple()
+            point = (int(p1[0] + (p2[0] - p1[0]) / 2) - 30, int(p1[1] + (p2[1] - p1[1]) / 2))
+            cv2.putText(img, 'k', point, cv2.FONT_HERSHEY_SIMPLEX, 2, tc(COLOR_MAP['bearing_wall']), 3, cv2.LINE_AA)
+
         for wall in room.walls:
             p1 = wall.inner_part.point_1.mult(scale).add(shift).int_tuple()
             p2 = wall.inner_part.point_2.mult(scale).add(shift).int_tuple()
 
             cv2.line(img, p1, p2, tc(COLOR_MAP[wall.wall_type]), line_w)
-            
+
 
         for o in room.openings:
             for p in o.placement:

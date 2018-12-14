@@ -24,23 +24,24 @@ class Room:
 
     }
 
-    def __init__(self, _walls=[], _openings=[], _furniture=[], _zones=[]):
+    def __init__(self, _walls=[], _openings=[], _furniture=[], _zones=[], _type=None):
         self.walls = _walls
         self.openings = _openings
         self.furniture = _furniture
         self.zones = _zones
+        self.type = _type
 
     def to_dict(self):
         walls = [_.to_dict() for _ in self.walls]
         openings = [_.to_dict() for _ in self.openings]
         zones = [_.to_dict() for _ in self.zones]
-
         furniture = [_.to_dict() for _ in self.furniture]
 
         return OrderedDict([('walls', walls),
                             ('openings', openings),
                             ('furniture', furniture),
-                            ('zones', zones)])
+                            ('zones', zones),
+                            ('type', self.type)])
 
     def get_bounding_rect(self):
         sx, sy, ex, ey = 10000, 10000, 0, 0
@@ -64,7 +65,9 @@ class Room:
             self.furniture = [Room._processor_map[_['type']](_) for _ in obj['furniture'] if
                               _['type'] in Room._processor_map]
         if 'zones' in obj:
-            self.zone = [Room._processor_map[_['type']](_) for _ in obj['zones'] if
-                              _['type'] in Room._processor_map]
+            self.zones = [Room._processor_map[_['type']](_) for _ in obj['zones'] if _['type'] in Room._processor_map]
+
+        if 'type' in obj:
+            self.type = obj['type']
 
         return self

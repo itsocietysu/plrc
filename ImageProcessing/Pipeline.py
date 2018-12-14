@@ -1,5 +1,6 @@
 import cv2
 from ImageProcessing.Stage import Stage
+from Entities.Plan import Plan
 
 class Pipeline:
     def __init__(self, _pipeline=[], _img=None, _desc=None, parameters=None, _graph=None,_label_map=None, _verbose=False):
@@ -13,6 +14,7 @@ class Pipeline:
         self.parameters_file = parameters
         self.graph = _graph
         self.label_map = _label_map
+        self.plan = Plan()
 
     def process(self):
         for stage in self.pipeline:
