@@ -20,10 +20,8 @@ class Plan:
 
     def make_graph(self):
         self.graph = np.zeros((len(self.items), len(self.rooms)))
-        for i in range(0, len(self.items) - 1):
-            item = self.items[i]
-            for j in range(0, len(self.rooms)):
-                room = self.rooms[j]
+        for i, item in enumerate(self.items):
+            for j, room in enumerate(self.rooms):
                 min_distance = 100000
                 for wall in room.walls:
                     distance = wall.inner_part.distance_to_point(item.center)

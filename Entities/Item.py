@@ -16,11 +16,11 @@ class Item:
     def to_dict(self):
         return OrderedDict([('type', Item._type),
                             ('item_type', self.item_type),
-                            ('placement', self.placement[0].to_dict())])
+                            ('placement', [_.to_dict() for _ in self.placement])])
 
     def from_dict(self, obj):
         if 'type' in obj and obj['type'] == Item._type and 'placement' in obj:
-            self.placement = [Line().from_dict(obj['placement'])]
+            self.placement = [Line().from_dict(_) for _ in obj['placement']]
             self.item_type = obj['item_type']
 
         return self

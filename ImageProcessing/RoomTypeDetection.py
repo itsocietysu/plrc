@@ -24,13 +24,21 @@ class RoomTypeDetection(Stage):
     def detect(self):
         items = self.plan.graph.shape[0]
         rooms = self.plan.graph.shape[1]
-        for i in range(0, items - 1):
+
+        min_d = []
+        for i in range(0, items):
             distances = self.plan.graph[i]
-            min_d = min(distances)
-            for j in range(0, rooms - 1):
-                if self.plan.graph[i][j] == min_d:
-                    for num, _ in enumerate(self.desc):
-                        if num == j:
-                            _.type = 'kitchen'
+            min_d.append((i, min(distances)))
+
+        closest = sorted(min_d, key=lambda _: _[1])[0]
+
+        i = closest[0]
+        min_d = closest[1]
+        for j in range(0, rooms):
+            if self.plan.graph[i][j] == min_d:
+                for num, _ in enumerate(self.desc):
+                    if num == j:
+                        _.type = 'kitchen'
+                        return
 
 

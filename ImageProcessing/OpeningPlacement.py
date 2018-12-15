@@ -26,11 +26,18 @@ class OpeningPlacement(Stage):
                 if new_item:
                     new_room.openings.append(new_item)
             res.append(new_room)
+
+        for opening in self.desc.openings:
+            if opening._type == 'item' or opening._type == 'arch':
+                new_item, rect = self.get_opening_rect(opening)
+
+                if new_item.item_type == 'vent_channel' or new_item.item_type == 'water_pipes':
+                    self.parent.plan.add_item(new_item)
+
         self.desc = res
         self.update_status(Stage.STATUS_SUCCEEDED)
 
-    def find_opening_place(self, walls, opening):
-
+    def get_opening_rect(self, opening):
         new_item = copy.deepcopy(opening)
 
         p1 = opening.placement[0].point_1
@@ -45,12 +52,13 @@ class OpeningPlacement(Stage):
         _ey = int(max(p1.y, p2.y)) + shift
 
         rect = Line(Point(_sx, _sy), Point(_ex, _ey))
+        return new_item, rect
+
+    def find_opening_place(self, walls, opening):
+        new_item, rect = self.get_opening_rect(opening)
 
         if opening._type == 'item' or opening._type == 'arch':
             new_item.placement.append(rect)
-            if new_item.item_type == 'vent_channel' or new_item.item_type == 'water_pipes':
-                self.parent.plan.add_item(new_item)
-
         else:
             for wall in walls:
                 intersection = wall.inner_part.rectangle_intersection(rect)
