@@ -21,11 +21,11 @@ class Save(Stage):
         """load the data"""
         self.update_status(Stage.STATUS_RUNNING)
 
-        if self.dxf:
-            self.save_in_dxf(self.dxf)
-
         if not os.path.exists(parent.out_dir):
             os.makedirs(parent.out_dir)
+
+        if self.dxf:
+            self.save_in_dxf(self.dxf)
 
         for i, _ in enumerate(self.desc):
             with open('%s/%d.json' % (parent.out_dir, i), 'wt') as fp:
