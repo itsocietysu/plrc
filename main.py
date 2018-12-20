@@ -18,5 +18,5 @@ if __name__ == '__main__':
     pipeline_steps = [Load, ObjectDetection, Preprocessing, Components, Contours, RoomConstructor, OpeningPlacement,
                       RoomTypeDetection, Save]
 
-    pipeline = Pipeline(pipeline_steps, sys.argv[1], sys.argv[2], sys.argv[3], _verbose=False)
+    pipeline = Pipeline(pipeline_steps, sys.argv[1], sys.argv[2], sys.argv[3], _save_dxf=sys.argv[4], _verbose=False)
     pipeline.process()
