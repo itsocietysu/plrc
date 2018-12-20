@@ -41,20 +41,39 @@ class Save(Stage):
         z = 0
         d = sdxf.Drawing()
         for room in self.desc:
+            if room.type == 'kitchen':
+                wall = room.walls[0]
+                p1 = wall.inner_part.point_1
+                p2 = wall.inner_part.point_2
+                point = (int(p1.x + (p2.x - p1.x) / 2) - 30, int(p1.y + (p2.x - p1.y) / 2))
+                d.append(sdxf.Text(text='k', point=[point[0], -point[1], z], height=20))
+
             for wall in room.walls:
                 line = wall.inner_part
                 d.append(sdxf.Line(points=[(line.point_1.x, -line.point_1.y, z), (line.point_2.x, -line.point_2.y, z)]))
+
             for opening in room.openings:
                 if opening._type == 'door':
                     for line in opening.placement:
                         d.append(sdxf.Line(points=[(line.point_1.x, -line.point_1.y, z),
                                                    (line.point_2.x, -line.point_2.y, z)],
                                            color=3))
+                    continue
+
                 if opening._type == 'window':
                     for line in opening.placement:
                         d.append(sdxf.Line(points=[(line.point_1.x, -line.point_1.y, z),
                                                    (line.point_2.x, -line.point_2.y, z)],
                                            color=4))
+                    continue
+
+                if opening._type == 'arch':
+                    for line in opening.placement:
+                        d.append(sdxf.Line(points=[(line.point_1.x, -int(line.point_1.y), z),
+                                                   (line.point_2.x, -int(line.point_2.y), z)],
+                                           color=2))
+                    continue
+
                 if opening._type == 'item':
                     rect = opening.placement[0]
                     p1 = rect.point_1
@@ -66,5 +85,6 @@ class Save(Stage):
                         d.append(sdxf.Line(points=[(line.point_1.x, -line.point_1.y, z),
                                                    (line.point_2.x, -line.point_2.y, z)],
                                            color=5))
+                    continue
 
         d.saveas(name)
