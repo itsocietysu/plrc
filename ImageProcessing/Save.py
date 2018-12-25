@@ -21,26 +21,31 @@ class Save(Stage):
         """load the data"""
         self.update_status(Stage.STATUS_RUNNING)
 
-        if not os.path.exists(parent.out_dir):
-            os.makedirs(parent.out_dir)
+        way = 'initial'
 
-        if self.dxf:
-            self.save_in_dxf(self.dxf)
-
-        for i, _ in enumerate(self.desc):
-            with open('%s/%d.json' % (parent.out_dir, i), 'wt') as fp:
-                json.dump(_.to_dict(), fp, indent=2)
-
-        #with open('./Assets/templates/viewer_json.tpl', 'rt') as f:
-        #    with open('%s/all_in_one.json' % parent.out_dir, 'wt') as fw:
-        #        fw.write(template(f.read(), rooms=self.desc))
+        self.save(parent.out_dir, way, self.desc)
 
         self.update_status(Stage.STATUS_SUCCEEDED)
 
-    def save_in_dxf(self, name):
+    def save(self, out_dir, way, desc):
+
+        if not os.path.exists(out_dir + '/' + way + '/'):
+            os.makedirs(out_dir + '/' + way + '/')
+
+        self.save_in_dxf(out_dir + '/' + way + '/' + '%s.dxf' % way, desc)
+
+        for i, _ in enumerate(desc):
+            with open('%s/%s/%d.json' % (out_dir, way, i), 'wt') as fp:
+                json.dump(_.to_dict(), fp, indent=2)
+
+        # with open('./Assets/templates/viewer_json.tpl', 'rt') as f:
+        #    with open('%s/all_in_one.json' % parent.out_dir, 'wt') as fw:
+        #        fw.write(template(f.read(), rooms=self.desc))
+
+    def save_in_dxf(self, name, desc):
         z = 0
         d = sdxf.Drawing()
-        for room in self.desc:
+        for room in desc:
             if room.type == 'kitchen':
                 wall = room.walls[0]
                 p1 = wall.inner_part.point_1
@@ -86,5 +91,17 @@ class Save(Stage):
                                                    (line.point_2.x, -line.point_2.y, z)],
                                            color=5))
                     continue
+                if room.furniture:
+                    for furniture in room.furniture:
+                        rect = furniture.placement
+                        p1 = rect.point_1
+                        p3 = rect.point_2
+                        p2 = Point(p1.x, p3.y)
+                        p4 = Point(p3.x, p1.y)
+                        lines = [Line(p1, p2), Line(p2, p3), Line(p3, p4), Line(p1, p4)]
+                        for line in lines:
+                            d.append(sdxf.Line(points=[(line.point_1.x, -line.point_1.y, z),
+                                                       (line.point_2.x, -line.point_2.y, z)],
+                                               color=6))
 
         d.saveas(name)

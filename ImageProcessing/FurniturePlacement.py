@@ -4,6 +4,7 @@ from ImageProcessing.Stage import Stage
 import copy
 import math
 from Entities.Point import Point
+from ImageProcessing.Save import Save
 SIZE = 20
 
 FURNITURE_TYPE_MAP = {
@@ -12,6 +13,7 @@ FURNITURE_TYPE_MAP = {
     'washer': Line(Point(0, 0), Point(SIZE, SIZE)),
     'refrigerator': Line(Point(0, 0), Point(SIZE, SIZE)),
     'stove': Line(Point(0, 0), Point(SIZE, SIZE)),
+    'empty': Line(Point(0, 0), Point(SIZE, SIZE)),
 }
 
 FURNITURE_ORIENTATION_MAP = {
@@ -58,11 +60,7 @@ def simple_placement(furniture, start_point, placement_orientation, len_x, len_y
     furniture.placement.point_2.x = p.x
     furniture.placement.point_2.y = p.y
 
-
-
-
-
-def place_furniture(furniture, room, point):
+def place_furniture(furniture, room):
     walls = room.walls
     delta = 3
     min_wall_len = 473
@@ -82,7 +80,8 @@ def place_furniture(furniture, room, point):
             angles.append(cur_wall.inner_part.point_2)
 
 
-    nw_angle = point#Point(angles[0].x, angles[0].y)
+    nw_angle = room.zones[0].points[0]
+
     for a in angles:
         nw_angle.x = min(nw_angle.x, a.x)
         nw_angle.y = min(nw_angle.y, a.y)
@@ -100,7 +99,7 @@ def place_furniture(furniture, room, point):
                 ne_angle = angles[(idx - 1) % len(angles)]
             break
 
-    se_angle = Point(0.0, 0.0)
+    se_angle = Point()
     for a in angles:
         if a.x >= se_angle.x and a.y >= se_angle.y:
             se_angle.x = a.x
@@ -162,6 +161,74 @@ def place_furniture(furniture, room, point):
     return furniture
 
 
+def furniture_angle(room, furniture, size, point):
+    d = 5
+    rect_size = Point(0, 0)
+    rect_size.x += (d + size) * 3
+    rect_size.y += (d + size) * 4
+    rect = Line(point, Point(point.x + rect_size.x, point.y + rect_size.y))
+    #for wall in room.walls:
+    #    if wall.inner_part.rectangle_intersection(rect):
+    #        return None
+
+    empty_box = Point(point.x, point.y)
+    furniture[0].update_placement(Point(empty_box.x + d, empty_box.y + size + d))
+    furniture[1].update_placement(Point(empty_box.x + d, furniture[0].placement.point_2.y + d))
+    furniture[2].update_placement(Point(empty_box.x + d, furniture[1].placement.point_2.y + d))
+
+    furniture[3].update_placement(Point(empty_box.x + size + d, empty_box.y + 2 * d))
+    furniture[4].update_placement(Point(furniture[3].placement.point_2.x + d, empty_box.y + 2 * d))
+
+    return furniture
+
+def furniture_line(room, furniture, point):
+    d = 5
+    rect_size = Point(0, 0)
+    point.x += d
+    point.y -= d
+    for f in furniture:
+        rect_size.x += d + f.placement.point_2.x
+        rect_size.y -= (d + f.placement.point_2.y)
+    rect = Line(point, Point(point.x + rect_size.x, point.y + rect_size.y))
+    #for wall in room.walls:
+    #    if wall.inner_part.rectangle_intersection(rect):
+    #        return None
+    furniture[0].update_placement(Point(point.x + d, point.y + 2 * d))
+    for i in range(1, len(furniture)):
+        furniture[i].update_placement(Point(point.x + d, furniture[i - 1].placement.point_2.y + d))
+    return furniture
+
+
+def furniture_placement(parent, furniture, room, size):
+    zone = room.zones[0]
+    f_line = None
+    f_angle = None
+    i = 0
+
+    if parent.parameters_file:
+        f = parent.parameters_file
+        for num in range(0, len(f) - 1):
+            if f[num] == '#zone':
+                i = f[num + 1]
+
+    point = zone.points[i]
+    if not f_line:
+        f = copy.deepcopy(furniture)
+        f_line = furniture_line(room, f, point)
+    if not f_angle:
+        f = copy.deepcopy(furniture)
+        f_angle = furniture_angle(room, f, size, point)
+
+    return f_line, f_angle
+
+
+def define_furniture_size(room):
+    for o in room.openings:
+        if o._type == 'door' and o.placement:
+            l = Line(o.placement[0].point_1, o.placement[-1].point_2)
+            return 0.5 * l.line_length()
+
+
 class FurniturePlacement(Stage):
     _name = 'furniture_placement'
 
@@ -171,27 +238,44 @@ class FurniturePlacement(Stage):
     def process(self, parent):
         """smooth the data"""
 
-        if parent.parameters_file:
-            f = parent.parameters_file
-            point = Point(int(f[1]), int(f[2]))
-
         res = []
-        furniture = []
         for i, room in enumerate(self.desc):
             new_room = copy.deepcopy(room)
-            if i == 4:
+            if room.type == 'kitchen':
+                size = define_furniture_size(room)
                 furniture = [
-                    Furniture(FURNITURE_TYPE_MAP['kitchen_sink'], FURNITURE_ORIENTATION_MAP['north'], 'kitchen_sink'),
-                    Furniture(FURNITURE_TYPE_MAP['dishwasher'], FURNITURE_ORIENTATION_MAP['north'], 'dishwasher'),
-                    Furniture(FURNITURE_TYPE_MAP['washer'], FURNITURE_ORIENTATION_MAP['north'], 'washer'),
-                    Furniture(FURNITURE_TYPE_MAP['stove'], FURNITURE_ORIENTATION_MAP['north'], 'stove'),
-                    Furniture(FURNITURE_TYPE_MAP['refrigerator'], FURNITURE_ORIENTATION_MAP['north'], 'refrigerator')]
-
-                furniture = place_furniture(furniture, new_room, point)
-            if furniture:
-                for f in furniture:
-                    new_room.furniture.append(f)
-
+                    Furniture(Line(Point(0, 0), Point(size, size)), FURNITURE_ORIENTATION_MAP['north'], 'kitchen_sink'),
+                    Furniture(Line(Point(0, 0), Point(size, size)), FURNITURE_ORIENTATION_MAP['north'], 'dishwasher'),
+                    Furniture(Line(Point(0, 0), Point(size, size)), FURNITURE_ORIENTATION_MAP['north'], 'washer'),
+                    Furniture(Line(Point(0, 0), Point(size, size)), FURNITURE_ORIENTATION_MAP['north'], 'stove'),
+                    Furniture(Line(Point(0, 0), Point(size, size)), FURNITURE_ORIENTATION_MAP['north'], 'refrigerator')]
+                f_line, f_angle = furniture_placement(parent, furniture, new_room, size)
+                if f_line:
+                    new_room.furniture = f_line
+            new_room.walls = room.walls
+            new_room.openings = room.openings
             res.append(new_room)
+        Save().save(parent.out_dir, 'furniture_%i' % 1, res)
+
+        res = []
+        for i, room in enumerate(self.desc):
+            new_room = copy.deepcopy(room)
+            if room.type == 'kitchen':
+                size = define_furniture_size(room)
+                furniture = [
+                    Furniture(Line(Point(0, 0), Point(size, size)), FURNITURE_ORIENTATION_MAP['north'], 'kitchen_sink'),
+                    Furniture(Line(Point(0, 0), Point(size, size)), FURNITURE_ORIENTATION_MAP['north'], 'dishwasher'),
+                    Furniture(Line(Point(0, 0), Point(size, size)), FURNITURE_ORIENTATION_MAP['north'], 'washer'),
+                    Furniture(Line(Point(0, 0), Point(size, size)), FURNITURE_ORIENTATION_MAP['north'], 'stove'),
+                    Furniture(Line(Point(0, 0), Point(size, size)), FURNITURE_ORIENTATION_MAP['north'], 'refrigerator')]
+                f_line, f_angle = furniture_placement(parent, furniture, new_room, size)
+                if f_angle:
+                    new_room.furniture = f_angle
+
+            new_room.walls = room.walls
+            new_room.openings = room.openings
+            res.append(new_room)
+        Save().save(parent.out_dir, 'furniture_%i' % 2, res)
+
         self.desc = res
         self.update_status(Stage.STATUS_SUCCEEDED)
