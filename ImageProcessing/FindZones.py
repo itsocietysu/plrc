@@ -17,7 +17,7 @@ class FindZones(Stage):
         res = []
         for i, room in enumerate(self.desc):
             new_room = copy.deepcopy(room)
-            if i == 4: # !!!DEBUG!!!
+            if room.type == 'kitchen':
                 zones = self.find_zones(new_room)
                 if zones:
                     for z in zones:
@@ -126,6 +126,5 @@ class FindZones(Stage):
                     z2.zone_type = 'bad_zone'
                     zones.append(z1)
                     zones.append(z2)
-
 
         return zones

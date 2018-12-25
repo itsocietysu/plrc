@@ -125,6 +125,9 @@ class Line:
         p = ShapelyPoint(point.x, point.y)
         return l.distance(p)
 
+    def line_length(self):
+        return pow((pow(self.point_1.x - self.point_2.x, 2) + pow(self.point_1.y - self.point_2.y, 2)), 1 / 2)
+
 
 #if __name__ == '__main__':
-#    print(Line(Point(0, 0), Point(1, 0)).distance_to_point(Point(1, 1)))
+#    print(Line(Point(0, 0), Point(1, 0)).line_lenght())
