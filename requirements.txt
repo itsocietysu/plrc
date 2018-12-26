@@ -3,3 +3,4 @@ bottle
 numpy
 tensorflow
 shapely
+dxf
