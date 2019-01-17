@@ -45,7 +45,10 @@ class OpeningPlacement(Stage):
 
         new_item.placement = []
 
-        shift = OpeningPlacement.WIDER
+        shift = 0
+        if opening._type != 'window':
+            shift = OpeningPlacement.WIDER
+
         _sx = int(min(p1.x, p2.x)) - shift
         _ex = int(max(p1.x, p2.x)) + shift
         _sy = int(min(p1.y, p2.y)) - shift
