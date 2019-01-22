@@ -10,7 +10,7 @@ from Entities.Point import Point
 class OpeningPlacement(Stage):
     _name = 'opening_placement'
 
-    WIDER = -5
+    WIDER = -8
 
     def __init__(self):
         Stage().__init__()

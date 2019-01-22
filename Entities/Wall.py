@@ -8,7 +8,6 @@ class Wall:
         'wall': 'wall',
         'bearing_wall': 'bearing_wall',
         'outer_wall': 'outer_wall',
-        'none': 'none'
     }
 
     def __init__(self, _inner_part=None, _outer_part=None):
@@ -17,7 +16,7 @@ class Wall:
             _outer_part = _inner_part
 
         self.outer_part = _outer_part
-        self.wall_type = None
+        self.wall_type = 'wall'
         self.size = None
 
     def to_dict(self):
