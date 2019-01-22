@@ -160,7 +160,7 @@ class RoomConstructor(Stage):
                 if w_max == not_bearing:
                     return Wall.WALL_TYPE_MAP['wall']
 
-            return Wall.WALL_TYPE_MAP['none']
+            return Wall.WALL_TYPE_MAP['wall']
 
         img = self.fill_rooms(res)
 

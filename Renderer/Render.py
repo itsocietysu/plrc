@@ -9,9 +9,9 @@ COLOR_MAP = {
     'balcony_wall': (100, 50, 200),
     'window': (255, 0, 0),
     'vent_channel': (255, 255, 0),
-    'wall': (100, 0, 100),
-    'outer_wall': (0, 0, 255),
-    'bearing_wall': (0, 0, 200),
+    'wall': (0, 0, 200),
+    'outer_wall': (100, 0, 100),
+    'bearing_wall': (100, 0, 100),
 
     'none': (100, 100, 100),
 
@@ -87,6 +87,14 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
                     r = int(math.fabs(p2[1] - p1[1]) / 2)
                     center = (int((p2[0] + p1[0]) / 2), int((p2[1] + p1[1]) / 2))
                     cv2.circle(img, center, r, tc(COLOR_MAP[f.furniture_type]), line_w)
-                else:
+                if f.furniture_type == 'washer':
                     cv2.rectangle(img, p1, p2, tc(COLOR_MAP[f.furniture_type]), line_w)
+        """if room.zones:
+            for z in room.zones:
+                i = 1
+                while i < len(z.points):
+                    p1 = z.points[i - 1].int_tuple()
+                    p2 = z.points[i].int_tuple()
+                    cv2.line(img, p1, p2, tc(COLOR_MAP['arch']), line_w)
+                    i = i + 1"""
     return img
