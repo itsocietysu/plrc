@@ -32,7 +32,7 @@ COLOR_MAP = {
 }
 
 
-def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
+def render_room(img, room, line_w=2, shift=Point(0, 0), scale=1, gray=False):
     def tc(c):
         if gray:
             return (c[0] + c[1] + c[2]) / 3
@@ -50,7 +50,7 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
             p1 = wall.inner_part.point_1.mult(scale).add(shift).int_tuple()
             p2 = wall.inner_part.point_2.mult(scale).add(shift).int_tuple()
 
-            cv2.line(img, p1, p2, tc(COLOR_MAP[wall.wall_type]), line_w)
+            cv2.line(img, p1, p2, tc(COLOR_MAP[wall.wall_type]), 1)
 
 
         for o in room.openings:
