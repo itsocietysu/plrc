@@ -45,7 +45,7 @@ class OpeningPlacement(Stage):
 
         new_item.placement = []
 
-        shift = 0
+        shift = -2
         if opening._type != 'window':
             shift = OpeningPlacement.WIDER
 
