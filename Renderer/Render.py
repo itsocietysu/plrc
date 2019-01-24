@@ -9,9 +9,9 @@ COLOR_MAP = {
     'balcony_wall': (100, 50, 200),
     'window': (255, 0, 0),
     'vent_channel': (255, 255, 0),
-    'wall': (0, 0, 200),
-    'outer_wall': (100, 0, 100),
-    'bearing_wall': (100, 0, 100),
+    'wall': (100, 0, 100),
+    'outer_wall': (0, 0, 200),
+    'bearing_wall': (0, 0, 200),
 
     'none': (100, 100, 100),
 
@@ -32,11 +32,13 @@ COLOR_MAP = {
 }
 
 
-def render_room(img, room, line_w=2, shift=Point(0, 0), scale=1, gray=False):
+def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
     def tc(c):
         if gray:
             return (c[0] + c[1] + c[2]) / 3
         return c
+
+    line_w = 3
 
     if room:
         if room.type == 'kitchen':
