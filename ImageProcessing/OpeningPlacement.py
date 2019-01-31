@@ -48,10 +48,15 @@ class OpeningPlacement(Stage):
             shift = -((self.parent.width + self.parent.height) / 2) / ((abs(p1.x - p2.x) + abs(p1.y - p2.y)) / 2) / 10
         else:
             shift = window_shift
+
         if opening._type != 'window':
             shift = OpeningPlacement.WIDER
+
         if door_shift:
             shift = door_shift
+
+        if opening._type == 'item':
+            shift = 0
 
         _sx = int(min(p1.x, p2.x)) - shift
         _ex = int(max(p1.x, p2.x)) + shift
@@ -123,6 +128,7 @@ class OpeningPlacement(Stage):
 
         if opening._type == 'door' and new_item.placement and self.is_curve_door(new_item.placement, walls):
             new_item, rect = self.get_opening_rect(opening, door_shift=-15)
+            opening.placement[0] = rect
             find_intersections()
 
         return new_item
