@@ -39,7 +39,7 @@ class RoomConstructor(Stage):
         self.WALL_DIFF = 0.000001 * max(parent.height, parent.width)
         self.R_OUTER_WALL = int(0.2 * min(parent.width, parent.height))
         self.R_BEARING_WALL = int(self.R_OUTER_WALL / 8)
-        self.R_WALL = int(self.R_OUTER_WALL / 8)
+        self.R_WALL = int(self.R_OUTER_WALL / 8) * 3 #new
 
         self.R_MAP = {
             'wall': self.R_WALL,
@@ -288,9 +288,9 @@ class RoomConstructor(Stage):
                 i += 1
 
         wall_map_img = np.zeros((np.shape(wall_map)[0], np.shape(wall_map)[1], 3), np.uint8)
-        draw_walls('outer_wall')
         draw_walls('wall')
         draw_walls('bearing_wall')
+        draw_walls('outer_wall')
         return wall_map_img
 
     def define_type_of_walls(self, maxima_map, min_outer_wall, min_bearing_wall):
