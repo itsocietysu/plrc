@@ -1,6 +1,6 @@
 # plrc
 
-!!! REUQIRES opencv3.0^ 
+!!! REUQIRES opencv4.0^ 
 
 To run the example use for instance:
 

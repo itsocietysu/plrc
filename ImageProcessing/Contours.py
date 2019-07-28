@@ -16,7 +16,7 @@ class Contours(Stage):
         for img in self.img:
             gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             cnt = cv2.findContours(gray_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1)
-            res.append(cnt[1][0])
+            res.append(cnt[0][0])
 
         self.img = res
         self.desc = self.desc
