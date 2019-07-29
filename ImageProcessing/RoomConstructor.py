@@ -8,6 +8,7 @@ from Entities.Point import Point
 from Entities.Arch import Arch
 
 from ImageProcessing.Stage import Stage
+from Renderer.Render import render_room
 
 WALL_MAP = {
             'space':        0,
@@ -332,3 +333,8 @@ class RoomConstructor(Stage):
         wall_map[ids] = vert_wall_map[ids]
 
         return wall_map
+
+    def visualize_stage(self):
+        img = np.zeros((self.parent.height, self.parent.width, 3), np.uint8)
+        img = render_room(img, self.desc, line_w=3)
+        return img
