@@ -2,8 +2,10 @@ import cv2
 from ImageProcessing.Stage import Stage
 from Entities.Plan import Plan
 
+
 class Pipeline:
-    def __init__(self, _pipeline=[], _img=None, _desc=None, parameters=None, _graph=None,_label_map=None, _verbose=False, _save_dxf=None):
+    def __init__(self, _pipeline=[], _img=None, _desc=None, parameters=None, _graph=None, _label_map=None,
+                 _verbose=False, _save_dxf=None):
         self.pipeline = _pipeline
         self.img = _img
         self.desc = _desc
