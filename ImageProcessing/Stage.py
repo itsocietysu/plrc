@@ -44,3 +44,4 @@ class Stage:
                 continue
 
         cv2.waitKey(1)
+        return None
