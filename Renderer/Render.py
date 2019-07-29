@@ -38,7 +38,7 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
             return (c[0] + c[1] + c[2]) / 3
         return c
 
-    line_w = 3
+    # line_w = 3
 
     if room:
         if room.type == 'kitchen':
@@ -52,7 +52,7 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
             p1 = wall.inner_part.point_1.mult(scale).add(shift).int_tuple()
             p2 = wall.inner_part.point_2.mult(scale).add(shift).int_tuple()
 
-            cv2.line(img, p1, p2, tc(COLOR_MAP[wall.wall_type]), 1)
+            cv2.line(img, p1, p2, tc(COLOR_MAP[wall.wall_type]), 2)
 
 
         for o in room.openings:
