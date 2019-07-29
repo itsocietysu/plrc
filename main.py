@@ -51,7 +51,7 @@ if __name__ == '__main__':
     while True:
         reply = easygui.buttonbox(msg=msg, title=title, choices=[ch_chp, ch_exit], cancel_choice=ch_exit)
 
-        if reply == ch_exit:
+        if reply != ch_chp:
             break
 
         img = easygui.fileopenbox(msg=ch_chp, default="*.png", filetypes=["*.png"])
