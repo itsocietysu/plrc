@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import cv2
 
 from ImageProcessing.Stage import Stage
 
@@ -9,6 +10,7 @@ from Entities.Window import Window
 from Entities.Line import Line
 from Entities.Point import Point
 from Entities.Item import Item
+from Renderer.Render import render_room, COLOR_MAP
 
 from Utils.label_map_reader import *
 
@@ -41,7 +43,7 @@ class ObjectDetection(Stage):
             img_np = np.expand_dims(self.img, axis=0)
 
             return s.run([detection_boxes, detection_scores, detection_classes, num_detections],
-                  feed_dict={image_tensor: img_np})
+                         feed_dict={image_tensor: img_np})
 
     def process(self, parent):
         """load the data"""
@@ -62,7 +64,7 @@ class ObjectDetection(Stage):
         (boxes, scores, classes, num) = self.proceed_with_boxes(graph)
 
         w, h = parent.width, parent.height
-        room = Room()
+        room = Room(_openings=[])
 
         choice = {
             'door':         [Door, None],
@@ -97,3 +99,17 @@ class ObjectDetection(Stage):
 
         self.update_status(Stage.STATUS_SUCCEEDED)
 
+    def visualize_stage(self):
+        line_w = 3
+        img = render_room(self.img.copy(), self.desc, line_w=line_w)
+
+        for o in self.desc.openings:
+            p1 = o.placement[0].point_1
+            p2 = o.placement[0].point_2
+            if o._type == 'item':
+                color = COLOR_MAP[o.item_type]
+            else:
+                color = COLOR_MAP[o._type]
+            cv2.rectangle(img, (p1.x, p1.y), (p2.x, p2.y), color, line_w)
+
+        return img
