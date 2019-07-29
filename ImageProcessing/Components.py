@@ -16,6 +16,8 @@ class Components(Stage):
 
     def __init__(self):
         Stage().__init__()
+        self.w = 0
+        self.h = 0
 
     def process(self, parent):
         """smooth the data"""
@@ -65,5 +67,12 @@ class Components(Stage):
         #    res = cv2.bitwise_or(res, _)
 
         #self.img = res
+        self.w, self.h = w, h
         self.desc = self.desc
         self.update_status(Stage.STATUS_SUCCEEDED)
+
+    def visualize_stage(self):
+        img = np.zeros((self.w, self.h, 3), np.uint8)
+        for i in self.img:
+            img += i
+        return img
