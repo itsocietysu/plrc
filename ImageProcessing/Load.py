@@ -27,3 +27,6 @@ class Load(Stage):
             f.close()
 
         self.update_status(Stage.STATUS_SUCCEEDED)
+
+    def visualize_stage(self):
+        return self.img
