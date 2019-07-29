@@ -24,3 +24,6 @@ class Preprocessing(Stage):
         self.img = binary
         self.desc = self.desc
         self.update_status(Stage.STATUS_SUCCEEDED)
+
+    def visualize_stage(self):
+        return cv2.cvtColor(self.img, cv2.COLOR_GRAY2BGR)
