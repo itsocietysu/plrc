@@ -35,7 +35,7 @@ def load():
 
 def process_image(path):
     pipeline = Pipeline(pipeline_steps, path, os.path.join('.', 'out', os.path.splitext(os.path.basename(path))[0]),
-                        parameters, _verbose=False, _graph=graph, _label_map=label_map)
+                        parameters, _verbose=True, _graph=graph, _label_map=label_map)
     pipeline.process()
 
 
