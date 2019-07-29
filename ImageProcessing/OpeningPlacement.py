@@ -1,10 +1,14 @@
 import copy
 
+import numpy as np
+
+from Entities.Room import Room
 from ImageProcessing.Stage import Stage
 
 from Entities.Line import Line
 
 from Entities.Point import Point
+from Renderer.Render import render_room
 
 """Binarize image and remove basical noize"""
 class OpeningPlacement(Stage):
@@ -132,3 +136,9 @@ class OpeningPlacement(Stage):
             find_intersections()
 
         return new_item
+
+    def visualize_stage(self):
+        img = np.zeros((self.parent.height, self.parent.width, 3), np.uint8)
+        for r in self.desc:
+            img = render_room(img, Room().from_dict(r.to_dict()), line_w=3)
+        return img
