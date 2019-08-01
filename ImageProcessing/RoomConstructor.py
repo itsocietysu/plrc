@@ -336,5 +336,6 @@ class RoomConstructor(Stage):
 
     def visualize_stage(self):
         img = np.zeros((self.parent.height, self.parent.width, 3), np.uint8)
-        img = render_room(img, self.desc, line_w=3)
+        for r in self.img:
+            img = render_room(img, Room().from_dict(r.to_dict()), line_w=3)
         return img

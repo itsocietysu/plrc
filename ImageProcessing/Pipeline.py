@@ -98,3 +98,4 @@ class Pipeline:
 
         if self.verbose:
             cv2.waitKey(0)
+            cv2.destroyWindow(window_name)
