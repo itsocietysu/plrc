@@ -5,6 +5,7 @@ def propagate_val(val):
 
     return int(val)
 
+
 def load_label_map_file(file_name):
     with open(file_name, 'rt') as fp:
         res = []
@@ -30,6 +31,7 @@ def load_label_map_file(file_name):
                     current_obj[key] = propagate_val(val)
 
         return res
+
 
 def label_map_to_dict(lm):
     res = {}
