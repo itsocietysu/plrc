@@ -12,8 +12,6 @@ class OpeningPlacement(Stage):
     """Place openings in rooms"""
     _name = 'opening_placement'
 
-    WIDER = -11
-
     def __init__(self):
         Stage().__init__()
         self.shape = ()
@@ -21,6 +19,13 @@ class OpeningPlacement(Stage):
     def process(self, parent):
         self.update_status(Stage.STATUS_RUNNING)
 
+        self.wider = parent.config[self._name]['WIDER']
+        self.window_shift = parent.config[self._name]['WINDOW_SHIFT']
+        self.door_shift = parent.config[self._name]['DOOR_SHIFT']
+        self.window_len_ratio = parent.config[self._name]['WINDOW_LENGTH_RATIO']
+        self.door_len_ratio = parent.config[self._name]['DOOR_LENGTH_RATIO']
+        self.window_curve_angles = parent.config[self._name]['WINDOW_CURVE_ANGLES']
+        self.min_count_big_angle = parent.config[self._name]['MIN_COUNT_BIG_ANGLE']
         self.shape = (parent.height, parent.width, 3)
 
         res = []
@@ -55,7 +60,7 @@ class OpeningPlacement(Stage):
             shift = window_shift
 
         if opening._type != 'window':
-            shift = OpeningPlacement.WIDER
+            shift = self.wider
 
         if door_shift:
             shift = door_shift
@@ -80,14 +85,15 @@ class OpeningPlacement(Stage):
                 if wall.inner_part.distance_to_point(line.point_1) == 0:
                     if line_in_room:
                         angle = line.angle_between(line_in_room[-1])
-                        if 15 < angle < 75 or 115 < angle < 165:
+                        if any([a[0] < angle < a[1] for a in self.window_curve_angles]):
                             count_big_angle += 1
                     line_in_room.append(line)
                     lenght += line.line_length()
 
         if line_in_room:
             distance = Line(line_in_room[0].point_1, line_in_room[-1].point_2)
-            if distance.line_length() != 0 and lenght / distance.line_length() > 2 and count_big_angle > 2:
+            if distance.line_length() != 0 and lenght / distance.line_length() > self.window_len_ratio \
+                    and count_big_angle > self.min_count_big_angle:
                 return True
 
         return False
@@ -103,7 +109,7 @@ class OpeningPlacement(Stage):
 
         if line_in_room:
             distance = Line(line_in_room[0].point_1, line_in_room[-1].point_2)
-            if distance.line_length() != 0 and lenght / distance.line_length() > 1.1:
+            if distance.line_length() != 0 and lenght / distance.line_length() > self.door_len_ratio:
                 return True
 
         return False
@@ -127,11 +133,11 @@ class OpeningPlacement(Stage):
             find_intersections()
 
         if opening._type == 'window' and new_item.placement and self.is_curve_window(new_item.placement, walls):
-            new_item, rect = self.get_opening_rect(opening, window_shift=-25)
+            new_item, rect = self.get_opening_rect(opening, window_shift=self.window_shift)
             find_intersections()
 
         if opening._type == 'door' and new_item.placement and self.is_curve_door(new_item.placement, walls):
-            new_item, rect = self.get_opening_rect(opening, door_shift=-15)
+            new_item, rect = self.get_opening_rect(opening, door_shift=self.door_shift)
             opening.placement[0] = rect
             find_intersections()
 
