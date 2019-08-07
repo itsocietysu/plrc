@@ -1,8 +1,7 @@
-import sys
 import os
+import json
+import easygui
 
-from ImageProcessing.FindZones import FindZones
-from ImageProcessing.FurniturePlacement import FurniturePlacement
 from ImageProcessing.Load import Load
 from ImageProcessing.Preprocessing import Preprocessing
 from ImageProcessing.Components import Components
@@ -11,31 +10,38 @@ from ImageProcessing.RoomConstructor import RoomConstructor
 from ImageProcessing.OpeningPlacement import OpeningPlacement
 from ImageProcessing.ObjectDetection import ObjectDetection
 from ImageProcessing.Save import Save
-from ImageProcessing.RoomTypeDetection import RoomTypeDetection
-
 from ImageProcessing.Pipeline import Pipeline
-
-import easygui
 
 from Utils.label_map_reader import load_label_map_file, label_map_to_dict
 from Utils.load_graph import load_graph
 
 graph = None
 label_map = None
-parameters = "./Assets/parameters.txt"
+config = "./Assets/config.json"
 pipeline_steps = [Load, ObjectDetection, Preprocessing, Components, Contours, RoomConstructor, OpeningPlacement, Save]
-#                  RoomTypeDetection, FindZones, FurniturePlacement]
+
+
+def open_config():
+    global config
+    with open(config, 'r') as f:
+        c = json.load(f)
+    config_path = os.path.split(config)[0]
+    c['PARAMETERS_FILE'] = os.path.join(config_path, c['PARAMETERS_FILE'])
+    c[ObjectDetection._name]['GRAPH_LOCATION'] = os.path.join(config_path, c[ObjectDetection._name]['GRAPH_LOCATION'])
+    c[ObjectDetection._name]['LABEL_MAP_LOCATION'] = os.path.join(config_path,
+                                                                  c[ObjectDetection._name]['LABEL_MAP_LOCATION'])
+    config = c
 
 
 def load():
     global graph, label_map
-    graph = load_graph('./Assets/frozen_inference_graph.pb')
-    label_map = label_map_to_dict(load_label_map_file('./Assets/label_map.pbtxt'))
+    graph = load_graph(config[ObjectDetection._name]['GRAPH_LOCATION'])
+    label_map = label_map_to_dict(load_label_map_file(config[ObjectDetection._name]['LABEL_MAP_LOCATION']))
 
 
 def process_image(path):
     pipeline = Pipeline(pipeline_steps, path, os.path.join('.', 'out', os.path.splitext(os.path.basename(path))[0]),
-                        parameters, _verbose=True, _graph=graph, _label_map=label_map)
+                        config['PARAMETERS_FILE'], _verbose=True, _graph=graph, _label_map=label_map, _config=config)
     pipeline.process()
 
 
@@ -44,6 +50,8 @@ if __name__ == '__main__':
     msg = "You can choose new picture for processing or exit application."
     ch_chp = 'Choose the picture'
     ch_exit = 'Exit'
+
+    open_config()
 
     print("Upload graph of the neural network. Please wait.\n")
     load()
