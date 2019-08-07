@@ -3,8 +3,8 @@ import cv2
 from ImageProcessing.Stage import Stage
 
 
-"""Upload processing data"""
 class Load(Stage):
+    """Upload processing data"""
     _name = 'load'
 
     def __init__(self):
