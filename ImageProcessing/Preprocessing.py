@@ -7,8 +7,6 @@ class Preprocessing(Stage):
     """Binarize image and remove basical noize"""
     _name = 'preprocessing'
 
-    GAUSS_CORE = (5, 5)
-    
     def __init__(self):
         Stage().__init__()
 
@@ -16,7 +14,7 @@ class Preprocessing(Stage):
         """smooth the data"""
         self.update_status(Stage.STATUS_RUNNING)
 
-        smooth = cv2.GaussianBlur(self.img, Preprocessing.GAUSS_CORE, 0)
+        smooth = cv2.GaussianBlur(self.img, tuple(parent.config[self._name]['GAUSS_CORE']), 0)
 
         gray = cv2.cvtColor(smooth, cv2.COLOR_BGR2GRAY)
 
