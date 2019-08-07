@@ -30,7 +30,7 @@ def show_image(img):
 
 
 def on_track_change(images, alpha, stage):
-    if len(images) < stage or len(images) == 0 or images[stage] is None:
+    if len(images) < stage or len(images) == 0 or images[stage] is None or images[0] is None:
         return
 
     alpha = alpha / max_alpha
@@ -92,13 +92,17 @@ class Pipeline:
                 self.img, self.desc = _.retrieve_data()
 
                 if self.verbose:
-                    self.images.append(_.visualize_stage())
-                    show_image(self.images[i])
-                    cv2.setTrackbarPos(tr_stage, window_name, i)
-                    cv2.waitKey(7)
+                    try:
+                        self.images.append(_.visualize_stage())
+                        show_image(self.images[i])
+                        cv2.setTrackbarPos(tr_stage, window_name, i)
+                        cv2.waitKey(7)
+                    except:
+                        print("Cannot visualize stage %s" % _._name)
 
             if _.status == Stage.STATUS_FAILED:
-                raise Exception('Stage %s, failed' % _._name)
+                print('Stage %s, failed' % _._name)
+                break
 
         if self.verbose:
             cv2.waitKey(0)
