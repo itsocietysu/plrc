@@ -1,14 +1,14 @@
-#import json
 import cv2
 import numpy as np
+
 from Entities.Room import Room
 from Entities.Wall import Wall
 from Entities.Line import Line
 from Entities.Point import Point
 from Entities.Arch import Arch
-
 from ImageProcessing.Stage import Stage
 from Renderer.Render import render_room
+
 
 WALL_MAP = {
             'space':        0,
@@ -18,35 +18,36 @@ WALL_MAP = {
 }
 
 WALL_COLOR_MAP = {
-            'wall':         (0, 255, 0),     #green
-            'bearing_wall': (255, 0, 0),     #blue
-            'outer_wall':   (0, 0, 255)      #red
+            'wall':         (0, 255, 0),     # green
+            'bearing_wall': (255, 0, 0),     # blue
+            'outer_wall':   (0, 0, 255)      # red
 }
 
 
-"""Binarize image and remove basical noize"""
 class RoomConstructor(Stage):
+    """Construct rooms by it contours and define type of walls"""
     _name = 'room_constructor'
 
     def __init__(self):
         Stage().__init__()
+        self.shape = ()
 
     def process(self, parent):
-        """smooth the data"""
-        self.parent = parent
+        self.update_status(Stage.STATUS_RUNNING)
+
         self.TH = 0.1
         if parent.height < 1000 and parent.width < 1000:
             self.TH = 0.25
         self.WALL_DIFF = 0.000001 * max(parent.height, parent.width)
         self.R_OUTER_WALL = int(0.2 * min(parent.width, parent.height))
         self.R_BEARING_WALL = int(self.R_OUTER_WALL / 8)
-        self.R_WALL = int(self.R_OUTER_WALL / 8) * 3 #new
-
+        self.R_WALL = int(self.R_OUTER_WALL / 8) * 3
         self.R_MAP = {
             'wall': self.R_WALL,
             'bearing_wall': self.R_BEARING_WALL,
             'outer_wall': self.R_OUTER_WALL
         }
+        self.shape = (parent.height, parent.width, 3)
 
         res = []
         for i, cnt in enumerate(self.img):
@@ -60,50 +61,52 @@ class RoomConstructor(Stage):
                 room.walls.append(wall)
                 prev = curr
 
-            #with open('%d.json' % i, 'wt') as fp:
-            #  json.dump(room.to_dict(), fp, indent=2)
-
             res.append(room)
 
         self.align_walls(res)
-        self.walls_type(res)
-        self.choose_scale(res)
-        self.add_arches(res)
+        self.define_walls_type(res)
+        # self.choose_scale(res)
+        # self.add_arches(res)
 
         self.img = res
         self.desc = self.desc
         self.update_status(Stage.STATUS_SUCCEEDED)
 
-    def choose_wall(self, res, point):
+    @staticmethod
+    def choose_wall(res, point):
         for _ in res:
             for wall in _.walls:
                 if wall.inner_part.is_point_of_line(point):
                     return wall
         return None
 
-    def align_walls(self, res):
+    @staticmethod
+    def align_walls(res):
+
+        def align_wall(room_index, walls_index):
+            prev_wall = room.walls[room_index].inner_part
+            curr_wall = new_walls[walls_index].inner_part
+
+            angle = prev_wall.angle_between(curr_wall)
+            if angle < max_angle:
+                pos = Line(new_walls[walls_index].inner_part.point_1, room.walls[room_index].inner_part.point_2)
+                wall = Wall(pos)
+                new_walls[walls_index] = wall
+            else:
+                new_walls.append(room.walls[room_index])
+
         max_angle = 5
         for room in res:
             num_of_walls = len(room.walls)
-            new_walls = []
-            new_walls.append(room.walls[-1])
-            for i in range(0, num_of_walls):
-
-                prev_wall = room.walls[i].inner_part
-                curr_wall = new_walls[-1].inner_part
-
-                angle = prev_wall.angle_between(curr_wall)
-                if angle < max_angle:
-                    pos = Line(new_walls[-1].inner_part.point_1, room.walls[i].inner_part.point_2)
-                    wall = Wall(pos)
-                    new_walls[-1] = wall
-                else:
-                    new_walls.append(room.walls[i])
+            new_walls = [room.walls[-1]]
+            for i in range(num_of_walls - 1):
+                align_wall(i, -1)
+            align_wall(num_of_walls - 1, 0)
             room.walls = new_walls
 
     def choose_scale(self, res):
-        if self.parent.parameters_file:
-            f = self.parent.parameters_file
+        if self.parameters_file:
+            f = self.parameters_file
             point = Point(int(f[1]), int(f[2]))
             size = int(f[3])
             wall = self.choose_wall(res, point)
@@ -120,8 +123,8 @@ class RoomConstructor(Stage):
                         wall.size = pix_to_m * wall_len
 
     def add_arches(self, res):
-        if self.parent.parameters_file:
-            f = self.parent.parameters_file
+        if self.parameters_file:
+            f = self.parameters_file
             if len(f) > 5:
                 i = 5
                 line = Line(Point(f[i], f[i + 1]), Point(f[i + 2], f[i + 3]))
@@ -133,7 +136,7 @@ class RoomConstructor(Stage):
             return None
 
     """For detecting wall types"""
-    def walls_type(self, res):
+    def define_walls_type(self, res):
 
         def define_type():
             not_bearing = 0
@@ -165,10 +168,6 @@ class RoomConstructor(Stage):
 
         img = self.fill_rooms(res)
 
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        r, img = cv2.threshold(img, 40, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-        img = cv2.bitwise_not(img)
-
         dt = cv2.distanceTransform(img, cv2.DIST_L2, 3)
         mask = cv2.normalize(dt, dt, 0, 1., cv2.NORM_MINMAX)
 
@@ -178,11 +177,6 @@ class RoomConstructor(Stage):
 
         wall_map = self.create_wall_map(outer_walls_mask)
         wall_map_img = self.wall_map_color(wall_map)
-
-        #cv2.imshow('img', wall_map_img)
-        #cv2.imshow('dt', outer_walls_mask)
-
-        #cv2.waitKey(0)
 
         for room in res:
             for wall in room.walls:
@@ -194,36 +188,36 @@ class RoomConstructor(Stage):
 
         return wall_map_img
 
-    def fill_rooms(self, res):
-        SHIFT = 100
+    @staticmethod
+    def fill_rooms(res):
+        shift = 100
         x0, y0, x1, y1 = 10000, 10000, 0, 0
         for _ in res:
             _x0, _y0, _x1, _y1 = _.get_bounding_rect()
             x0,  y0,  x1,  y1 = min(x0, _x0), min(y0, _y0), max(x1, _x1), max(y1, _y1)
 
-        img = np.zeros((int(y1 + SHIFT), int(x1 + SHIFT), 3), np.uint8)
+        img = np.full((int(y1 + shift), int(x1 + shift)), np.uint8(255))
+        contours = []
         for _ in res:
-            walls = np.zeros((int(y1 + SHIFT), int(x1 + SHIFT), 3), np.uint8)
+            cnt = []
             for wall in _.walls:
                 p1 = wall.inner_part.point_1.int_tuple()
-                p2 = wall.inner_part.point_2.int_tuple()
-                cv2.line(walls, p1, p2, 255, 1)
-            th, im_th = cv2.threshold(walls, 0, 255, cv2.THRESH_BINARY_INV)
-            im_floodfill = im_th.copy()
-            h, w = im_th.shape[:2]
-            mask = np.zeros((h + 2, w + 2), np.uint8)
-            cv2.floodFill(im_floodfill, mask, (0, 0), 255)
-            img[im_floodfill != 0] = 255
+                cnt.append(np.array([np.array(p1)]))
+            contours.append(np.array(cnt))
 
+        contours = np.array(contours)
+        cv2.drawContours(img, contours, -1, 0, -1)
         return img
 
-    def find_local_maxima(self, str):
+    @staticmethod
+    def find_local_maxima(str):
         maxima = []
         maxima_ids = []
         i = 0
         while i < len(str):
             if str[i] > 0:
                 maximum = 0
+                idx = i
                 while str[i] > 0 and i < len(str) - 1:
                     if str[i] > maximum:
                         maximum = str[i]
@@ -250,7 +244,8 @@ class RoomConstructor(Stage):
         start_idx_bearing = classificate(local_maxima[:start_idx_outer])
         return start_idx_outer, start_idx_bearing
 
-    def wall_type(self, wall, min_outer_wall,  min_bearing_wall):
+    @staticmethod
+    def wall_type(wall, min_outer_wall, min_bearing_wall):
         if wall == 0:
             return WALL_MAP['space']
         if wall > min_outer_wall:
@@ -307,7 +302,7 @@ class RoomConstructor(Stage):
 
         transpose_mask = np.transpose(mask)
 
-        hor_local_maxima, hor_maxima_map   = self.create_maxima_map(mask)
+        hor_local_maxima, hor_maxima_map = self.create_maxima_map(mask)
         vert_local_maxima, vert_maxima_map = self.create_maxima_map(transpose_mask)
 
         vert_maxima_map = np.transpose(vert_maxima_map)
@@ -319,23 +314,23 @@ class RoomConstructor(Stage):
 
         start_idx_outer, start_idx_bearing = self.classificate_walls(local_maxima)
 
-        min_outer_wall   = local_maxima[start_idx_outer]
+        min_outer_wall = local_maxima[start_idx_outer]
         min_bearing_wall = local_maxima[start_idx_bearing]
 
-        hor_wall_map  = self.define_type_of_walls(hor_maxima_map,  min_outer_wall, min_bearing_wall)
+        hor_wall_map = self.define_type_of_walls(hor_maxima_map,  min_outer_wall, min_bearing_wall)
         vert_wall_map = self.define_type_of_walls(vert_maxima_map, min_outer_wall, min_bearing_wall)
 
-        hor_wall_map  = np.asarray(hor_wall_map)
+        hor_wall_map = np.asarray(hor_wall_map)
         vert_wall_map = np.asarray(vert_wall_map)
 
         wall_map = hor_wall_map
-        ids = np.where(wall_map == 0)
+        ids = np.where(wall_map == WALL_MAP['space'])
         wall_map[ids] = vert_wall_map[ids]
 
         return wall_map
 
     def visualize_stage(self):
-        img = np.zeros((self.parent.height, self.parent.width, 3), np.uint8)
+        img = np.zeros(self.shape, np.uint8)
         for r in self.img:
             img = render_room(img, Room().from_dict(r.to_dict()), line_w=3)
         return img
