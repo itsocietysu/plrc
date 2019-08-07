@@ -1,27 +1,28 @@
 import copy
-
 import numpy as np
 
 from Entities.Room import Room
-from ImageProcessing.Stage import Stage
-
 from Entities.Line import Line
-
 from Entities.Point import Point
 from Renderer.Render import render_room
+from ImageProcessing.Stage import Stage
 
-"""Binarize image and remove basical noize"""
+
 class OpeningPlacement(Stage):
+    """Place openings in rooms"""
     _name = 'opening_placement'
 
     WIDER = -11
 
     def __init__(self):
         Stage().__init__()
+        self.shape = ()
 
     def process(self, parent):
-        """smooth the data"""
-        self.parent = parent
+        self.update_status(Stage.STATUS_RUNNING)
+
+        self.shape = (parent.height, parent.width, 3)
+
         res = []
         for i, room in enumerate(self.img):
             new_room = copy.deepcopy(room)
@@ -36,7 +37,7 @@ class OpeningPlacement(Stage):
                 new_item, rect = self.get_opening_rect(opening)
 
                 if new_item.item_type == 'vent_channel' or new_item.item_type == 'water_pipes':
-                    self.parent.plan.add_item(new_item)
+                    parent.plan.add_item(new_item)
 
         self.desc = res
         self.update_status(Stage.STATUS_SUCCEEDED)
@@ -49,7 +50,7 @@ class OpeningPlacement(Stage):
 
         new_item.placement = []
         if not window_shift:
-            shift = -((self.parent.width + self.parent.height) / 2) / ((abs(p1.x - p2.x) + abs(p1.y - p2.y)) / 2) / 10
+            shift = -((self.shape[1] + self.shape[0]) / 2) / ((abs(p1.x - p2.x) + abs(p1.y - p2.y)) / 2) / 10
         else:
             shift = window_shift
 
@@ -79,7 +80,7 @@ class OpeningPlacement(Stage):
                 if wall.inner_part.distance_to_point(line.point_1) == 0:
                     if line_in_room:
                         angle = line.angle_between(line_in_room[-1])
-                        if angle > 15 and angle < 75 or angle > 115 and angle < 165:
+                        if 15 < angle < 75 or 115 < angle < 165:
                             count_big_angle += 1
                     line_in_room.append(line)
                     lenght += line.line_length()
@@ -106,7 +107,6 @@ class OpeningPlacement(Stage):
                 return True
 
         return False
-
 
     def find_opening_place(self, room, opening):
         walls = room.walls
@@ -138,7 +138,7 @@ class OpeningPlacement(Stage):
         return new_item
 
     def visualize_stage(self):
-        img = np.zeros((self.parent.height, self.parent.width, 3), np.uint8)
+        img = np.zeros(self.shape, np.uint8)
         for r in self.desc:
             img = render_room(img, Room().from_dict(r.to_dict()), line_w=3)
         return img
