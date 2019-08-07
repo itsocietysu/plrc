@@ -1,8 +1,6 @@
-import tensorflow as tf
-import numpy as np
 import cv2
-
-from ImageProcessing.Stage import Stage
+import numpy as np
+import tensorflow as tf
 
 from Entities.Room import Room
 from Entities.Door import Door
@@ -10,27 +8,39 @@ from Entities.Window import Window
 from Entities.Line import Line
 from Entities.Point import Point
 from Entities.Item import Item
+from ImageProcessing.Stage import Stage
 from Renderer.Render import render_room, COLOR_MAP
-
 from Utils.label_map_reader import *
+from Utils.load_graph import load_graph
 
-"""Upload processing data"""
+
+CHOICE = {
+    'door':         [Door, None],
+    'window':       [Window, None],
+    'balcony_door': [Door, None],
+    'vent_channel': [Item, 'vent_channel'],
+    'water_pipes':  [Item, 'water_pipes'],
+    'toilet':       [Item, 'toilet'],
+    'bathroom':     [Item, 'bathroom'],
+    'shower_cabin': [Item, 'shower_cabin'],
+    'sink':         [Item, 'sink'],
+    'kitchen_sink': [Item, 'kitchen_sink'],
+    'stove':        [Item, 'stove'],
+    'washer':       [Item, 'washer'],
+    'test':         [Item, 'test'],
+    'test2':        [Item, 'test2'],
+    'storeroom':    [Item, 'storeroom']
+}
+
+
 class ObjectDetection(Stage):
+    """Detect objects by using of neural network"""
     _name = 'object_detection'
     _graph_location = './Assets/frozen_inference_graph.pb'
     _label_map_location = './Assets/label_map.pbtxt'
 
     def __init__(self):
         Stage.__init__(self)
-
-    def load_graph(self):
-        with tf.gfile.GFile(self._graph_location, "rb") as f:
-            graph_def = tf.GraphDef()
-            graph_def.ParseFromString(f.read())
-
-        with tf.Graph().as_default() as graph:
-            tf.import_graph_def(graph_def, name='')
-        return graph
 
     def proceed_with_boxes(self, graph):
         with tf.Session(graph=graph) as s:
@@ -46,7 +56,6 @@ class ObjectDetection(Stage):
                          feed_dict={image_tensor: img_np})
 
     def process(self, parent):
-        """load the data"""
         self.update_status(Stage.STATUS_RUNNING)
 
         if self.label_map:
@@ -59,30 +68,12 @@ class ObjectDetection(Stage):
         if self.graph:
             graph = self.graph
         else:
-            graph = self.load_graph()
+            graph = load_graph(self._graph_location)
 
         (boxes, scores, classes, num) = self.proceed_with_boxes(graph)
 
         w, h = parent.width, parent.height
         room = Room(_openings=[])
-
-        choice = {
-            'door':         [Door, None],
-            'window':       [Window, None],
-            'balcony_door': [Door, None],
-            'vent_channel': [Item, 'vent_channel'],
-            'water_pipes':  [Item, 'water_pipes'],
-            'toilet':       [Item, 'toilet'],
-            'bathroom':     [Item, 'bathroom'],
-            'shower_cabin': [Item, 'shower_cabin'],
-            'sink':         [Item, 'sink'],
-            'kitchen_sink': [Item, 'kitchen_sink'],
-            'stove':        [Item, 'stove'],
-            'washer':       [Item, 'washer'],
-            'test':         [Item, 'test'],
-            'test2':        [Item, 'test2'],
-            'storeroom':    [Item, 'storeroom']
-        }
 
         for i in range(int(num[0])):
             sy, sx, ey, ex = int(boxes[0][i][0] * h), \
@@ -91,9 +82,9 @@ class ObjectDetection(Stage):
                              int(boxes[0][i][3] * w)
 
             placement = Line(Point(sx, sy), Point(ex, ey))
-            cl = choice[labels[int(classes[0][i])]]
-            t = cl[1]
-            cl = cl[0]
+            ch = CHOICE[labels[int(classes[0][i])]]
+            t = ch[1]
+            cl = ch[0]
             room.openings.append(cl(placement, t=t))
         self.desc = room
 
