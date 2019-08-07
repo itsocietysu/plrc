@@ -5,3 +5,4 @@ tensorflow
 shapely
 dxf
 easygui
+pyinstaller
