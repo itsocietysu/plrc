@@ -35,17 +35,19 @@ class RoomConstructor(Stage):
     def process(self, parent):
         self.update_status(Stage.STATUS_RUNNING)
 
-        self.TH = 0.1
-        if parent.height < 1000 and parent.width < 1000:
-            self.TH = 0.25
-        self.WALL_DIFF = 0.000001 * max(parent.height, parent.width)
-        self.R_OUTER_WALL = int(0.2 * min(parent.width, parent.height))
-        self.R_BEARING_WALL = int(self.R_OUTER_WALL / 8)
-        self.R_WALL = int(self.R_OUTER_WALL / 8) * 3
-        self.R_MAP = {
-            'wall': self.R_WALL,
-            'bearing_wall': self.R_BEARING_WALL,
-            'outer_wall': self.R_OUTER_WALL
+        max_shape = parent.config[self._name]['MAX_SHAPE']
+        self.max_angle = parent.config[self._name]['MAX_ANGLE']
+        self.th = parent.config[self._name]['TH'][0]
+        if parent.height < max_shape[0] and parent.width < max_shape[1]:
+            self.th = parent.config[self._name]['TH'][1]
+        self.wall_diff = parent.config[self._name]['WALL_DIFF'] * max(parent.height, parent.width)
+        self.r_outer_wall = int(parent.config[self._name]['R_OUTER_WALL'] * min(parent.width, parent.height))
+        self.r_bearing_wall = int(self.r_outer_wall * parent.config[self._name]['R_BEARING_WALL'])
+        self.r_wall = int(self.r_outer_wall * parent.config[self._name]['R_WALL'])
+        self.r_map = {
+            'wall': self.r_wall,
+            'bearing_wall': self.r_bearing_wall,
+            'outer_wall': self.r_outer_wall
         }
         self.shape = (parent.height, parent.width, 3)
 
@@ -80,22 +82,20 @@ class RoomConstructor(Stage):
                     return wall
         return None
 
-    @staticmethod
-    def align_walls(res):
+    def align_walls(self, res):
 
         def align_wall(room_index, walls_index):
             prev_wall = room.walls[room_index].inner_part
             curr_wall = new_walls[walls_index].inner_part
 
             angle = prev_wall.angle_between(curr_wall)
-            if angle < max_angle:
+            if angle < self.max_angle:
                 pos = Line(new_walls[walls_index].inner_part.point_1, room.walls[room_index].inner_part.point_2)
                 wall = Wall(pos)
                 new_walls[walls_index] = wall
             else:
                 new_walls.append(room.walls[room_index])
 
-        max_angle = 5
         for room in res:
             num_of_walls = len(room.walls)
             new_walls = [room.walls[-1]]
@@ -172,7 +172,7 @@ class RoomConstructor(Stage):
         mask = cv2.normalize(dt, dt, 0, 1., cv2.NORM_MINMAX)
 
         outer_walls_mask = np.copy(mask)
-        r, outer_walls = cv2.threshold(outer_walls_mask, self.TH, 1, cv2.THRESH_BINARY)
+        r, outer_walls = cv2.threshold(outer_walls_mask, self.th, 1, cv2.THRESH_BINARY)
         outer_walls_mask[outer_walls == 1] = 0
 
         wall_map = self.create_wall_map(outer_walls_mask)
@@ -235,7 +235,7 @@ class RoomConstructor(Stage):
             ind_max_difference = len(local_max) - 1
             for i in range(len(local_max) - 1):
                 difference = local_max[i + 1] - local_max[i]
-                if difference > max_difference and difference > self.WALL_DIFF:
+                if difference > max_difference and difference > self.wall_diff:
                     max_difference = difference
                     ind_max_difference = i + 1
             return ind_max_difference
@@ -279,7 +279,7 @@ class RoomConstructor(Stage):
                 for point in str:
                     if point != WALL_MAP['space']:
                         if point == WALL_MAP[type]:
-                            cv2.circle(wall_map_img, (j, i), self.R_MAP[type], WALL_COLOR_MAP[type], thickness=-1)
+                            cv2.circle(wall_map_img, (j, i), self.r_map[type], WALL_COLOR_MAP[type], thickness=-1)
                     j += 1
                 i += 1
 
