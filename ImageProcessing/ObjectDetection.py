@@ -36,8 +36,6 @@ CHOICE = {
 class ObjectDetection(Stage):
     """Detect objects by using of neural network"""
     _name = 'object_detection'
-    _graph_location = './Assets/frozen_inference_graph.pb'
-    _label_map_location = './Assets/label_map.pbtxt'
 
     def __init__(self):
         Stage.__init__(self)
@@ -61,14 +59,14 @@ class ObjectDetection(Stage):
         if self.label_map:
             labels = self.label_map
         else:
-            labels = label_map_to_dict(load_label_map_file(self._label_map_location))
+            labels = label_map_to_dict(load_label_map_file(parent.config[self._name]['LABEL_MAP_LOCATION']))
 
         tf.logging.set_verbosity(tf.logging.WARN)
 
         if self.graph:
             graph = self.graph
         else:
-            graph = load_graph(self._graph_location)
+            graph = load_graph(parent.config[self._name]['GRAPH_LOCATION'])
 
         (boxes, scores, classes, num) = self.proceed_with_boxes(graph)
 
