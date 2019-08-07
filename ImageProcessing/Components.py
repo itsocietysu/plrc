@@ -4,8 +4,8 @@ import numpy as np
 from ImageProcessing.Stage import Stage
 
 
-"""Binarize image and remove basical noize"""
 class Components(Stage):
+    """Find rooms"""
     _name = 'components'
 
     MIN_FILL_RATE = 0.45
@@ -16,12 +16,12 @@ class Components(Stage):
 
     def __init__(self):
         Stage().__init__()
-        self.w = 0
-        self.h = 0
+        self.shape = ()
 
     def process(self, parent):
-        """smooth the data"""
         self.update_status(Stage.STATUS_RUNNING)
+
+        self.shape = (parent.height, parent.width, 3)
 
         output = cv2.connectedComponentsWithStats(self.img, Components.CONNECTIVITY, cv2.CV_32S)
 
@@ -60,19 +60,11 @@ class Components(Stage):
             interm = cv2.dilate(_, Components.ERODE_KERNEL, iterations=1)
             self.img.append(cv2.erode(interm, Components.ERODE_KERNEL, iterations=1))
 
-
-        #res = cv2.bitwise_or(self.img[0], self.img[0])
-
-        #for _ in self.img:
-        #    res = cv2.bitwise_or(res, _)
-
-        #self.img = res
-        self.w, self.h = w, h
         self.desc = self.desc
         self.update_status(Stage.STATUS_SUCCEEDED)
 
     def visualize_stage(self):
-        img = np.zeros((self.w, self.h, 3), np.uint8)
+        img = np.zeros(self.shape, np.uint8)
         for i in self.img:
             img += i
         return img
