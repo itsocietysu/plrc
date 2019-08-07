@@ -8,12 +8,6 @@ class Components(Stage):
     """Find rooms"""
     _name = 'components'
 
-    MIN_FILL_RATE = 0.45
-    
-    ASPECT_RATIO = 5.0
-    CONNECTIVITY = 4
-    ERODE_KERNEL = np.ones((25, 25), np.uint8)
-
     def __init__(self):
         Stage().__init__()
         self.shape = ()
@@ -21,44 +15,47 @@ class Components(Stage):
     def process(self, parent):
         self.update_status(Stage.STATUS_RUNNING)
 
+        min_fill_rate = parent.config[self._name]['MIN_FILL_RATE']
+        aspect_ratio = parent.config[self._name]['ASPECT_RATIO']
+        connectivity = parent.config[self._name]['CONNECTIVITY']
+        min_size = int(parent.config[self._name]['MIN_SIZE'] * parent.width * parent.height)
+        erode_kernel = np.ones(tuple(parent.config[self._name]['ERODE_KERNEL']), np.uint8)
         self.shape = (parent.height, parent.width, 3)
 
-        output = cv2.connectedComponentsWithStats(self.img, Components.CONNECTIVITY, cv2.CV_32S)
+        output = cv2.connectedComponentsWithStats(self.img, connectivity, cv2.CV_32S)
 
-        MIN_SIZE = int(0.01 * parent.width * parent.height)
-
+        h, w = self.img.shape[0], self.img.shape[1]
         valuable_components = []
         for i in range(output[0]):
             if output[2][i][0] <= 5:
                 continue
 
-            if output[2][i][0] >= self.img.shape[1] - 1:
+            if output[2][i][0] >= w - 1:
                 continue
 
-            if output[2][i][4] <= MIN_SIZE:
+            if output[2][i][4] <= min_size:
                 continue
 
             factor = float(output[2][i][4]) / (float(output[2][i][2] * output[2][i][3]))
-            if factor <= Components.MIN_FILL_RATE:
+            if factor <= min_fill_rate:
                 continue
 
             ratio = float(output[2][i][2]) / float(output[2][i][3])
-            if ratio <= 0.0 or Components.ASPECT_RATIO <= ratio or Components.ASPECT_RATIO <= (1.0 / ratio):
+            if ratio <= 0.0 or aspect_ratio <= ratio or aspect_ratio <= (1.0 / ratio):
                 continue
 
             valuable_components.append(i)
 
-        w, h = self.img.shape[0], self.img.shape[1]
         images = []
         for _ in valuable_components:
-            new_img = np.zeros((w, h, 3), np.uint8)
+            new_img = np.zeros((h, w, 3), np.uint8)
             new_img[output[1] == _] = (0, 0, 255)
             images.append(new_img)
 
         self.img = []
         for _ in images:
-            interm = cv2.dilate(_, Components.ERODE_KERNEL, iterations=1)
-            self.img.append(cv2.erode(interm, Components.ERODE_KERNEL, iterations=1))
+            interm = cv2.dilate(_, erode_kernel, iterations=1)
+            self.img.append(cv2.erode(interm, erode_kernel, iterations=1))
 
         self.desc = self.desc
         self.update_status(Stage.STATUS_SUCCEEDED)
