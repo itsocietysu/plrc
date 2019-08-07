@@ -3,11 +3,12 @@ import cv2
 from ImageProcessing.Stage import Stage
 
 
-"""Binarize image and remove basical noize"""
 class Preprocessing(Stage):
+    """Binarize image and remove basical noize"""
     _name = 'preprocessing'
 
     GAUSS_CORE = (5, 5)
+    
     def __init__(self):
         Stage().__init__()
 
