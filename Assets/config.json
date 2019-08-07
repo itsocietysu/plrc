@@ -1,0 +1,35 @@
+{
+  "PARAMETERS_FILE": "./parameters.txt",
+  "object_detection": {
+    "GRAPH_LOCATION": "./frozen_inference_graph.pb",
+    "LABEL_MAP_LOCATION": "./label_map.pbtxt"
+  },
+  "preprocessing": {
+    "GAUSS_CORE": [5, 5]
+  },
+  "components": {
+    "MIN_FILL_RATE": 0.45,
+    "ASPECT_RATIO": 5,
+    "CONNECTIVITY": 4,
+    "ERODE_KERNEL": [25, 25],
+    "MIN_SIZE": 0.01
+  },
+  "room_constructor": {
+    "MAX_ANGLE": 5,
+    "TH": [0.1, 0.25],
+    "MAX_SHAPE": [1000, 1000],
+    "WALL_DIFF": 0.000001,
+    "R_OUTER_WALL": 0.2,
+    "R_BEARING_WALL": 0.125,
+    "R_WALL": 0.375
+  },
+  "opening_placement": {
+    "WIDER": -11,
+    "WINDOW_SHIFT": -25,
+    "DOOR_SHIFT": -15,
+    "WINDOW_LENGTH_RATIO": 2,
+    "DOOR_LENGTH_RATIO": 1.1,
+    "WINDOW_CURVE_ANGLES": [[15, 75], [115, 165]],
+    "MIN_COUNT_BIG_ANGLE": 2
+  }
+}
