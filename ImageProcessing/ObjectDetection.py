@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 import tensorflow as tf
 
-from Entities.Room import Room
 from Entities.Door import Door
-from Entities.Window import Window
+from Entities.Item import Item
 from Entities.Line import Line
 from Entities.Point import Point
-from Entities.Item import Item
+from Entities.Room import Room
+from Entities.Window import Window
 from ImageProcessing.Stage import Stage
 from Renderer.Render import render_room, COLOR_MAP
 from Utils.label_map_reader import *
