@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from Entities.Line import Line
 
+
 class Wall:
     _type = 'wall'
     WALL_TYPE_MAP = {

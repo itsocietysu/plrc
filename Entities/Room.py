@@ -1,12 +1,11 @@
 from collections import OrderedDict
 
-from Entities.Furniture import Furniture
-from Entities.Wall import Wall
-from Entities.Door import Door
-from Entities.Window import Window
-from Entities.Item import Item
-
 from Entities.Arch import Arch
+from Entities.Door import Door
+from Entities.Furniture import Furniture
+from Entities.Item import Item
+from Entities.Wall import Wall
+from Entities.Window import Window
 from Entities.Zone import Zone
 
 

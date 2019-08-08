@@ -3,6 +3,7 @@ from collections import OrderedDict
 from Entities.Line import Line
 from Entities.Point import Point
 
+
 class Item:
     _type = 'item'
 
