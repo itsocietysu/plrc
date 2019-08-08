@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
 
-from Entities.Room import Room
-from Entities.Wall import Wall
+from Entities.Arch import Arch
 from Entities.Line import Line
 from Entities.Point import Point
-from Entities.Arch import Arch
+from Entities.Room import Room
+from Entities.Wall import Wall
 from ImageProcessing.Stage import Stage
 from Renderer.Render import render_room
 
@@ -127,7 +127,7 @@ class RoomConstructor(Stage):
             f = self.parameters_file
             if len(f) > 5:
                 i = 5
-                line = Line(Point(f[i], f[i + 1]), Point(f[i + 2], f[i + 3]))
+                line = Line(Point(int(f[i]), int(f[i + 1])), Point(int(f[i + 2]), int(f[i + 3])))
                 arch = Arch(line)
                 res[0].openings.append(arch)
             else:
@@ -332,5 +332,5 @@ class RoomConstructor(Stage):
     def visualize_stage(self):
         img = np.zeros(self.shape, np.uint8)
         for r in self.img:
-            img = render_room(img, Room().from_dict(r.to_dict()), line_w=3)
+            img = render_room(img, r, line_w=3)
         return img
