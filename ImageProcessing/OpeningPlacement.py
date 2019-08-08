@@ -1,7 +1,6 @@
 import copy
 import numpy as np
 
-from Entities.Room import Room
 from Entities.Line import Line
 from Entities.Point import Point
 from Renderer.Render import render_room
@@ -146,5 +145,5 @@ class OpeningPlacement(Stage):
     def visualize_stage(self):
         img = np.zeros(self.shape, np.uint8)
         for r in self.desc:
-            img = render_room(img, Room().from_dict(r.to_dict()), line_w=3)
+            img = render_room(img, r, line_w=3)
         return img
