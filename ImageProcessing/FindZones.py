@@ -1,9 +1,10 @@
 import copy
 import math
-from ImageProcessing.Stage import Stage
+
 from Entities.Point import Point
-from Entities.Zone import Zone
 from Entities.Line import Line
+from Entities.Zone import Zone
+from ImageProcessing.Stage import Stage
 
 
 class FindZones(Stage):
@@ -13,7 +14,8 @@ class FindZones(Stage):
         Stage().__init__()
 
     def process(self, parent):
-        """smooth the data"""
+        self.update_status(Stage.STATUS_RUNNING)
+
         res = []
         for i, room in enumerate(self.desc):
             new_room = copy.deepcopy(room)
@@ -49,7 +51,6 @@ class FindZones(Stage):
         if zone_0.points[0].x == zone_0.points[-1].x and zone_0.points[0].y == zone_0.points[-1].y:
             del zone_0.points[-1]
         zones.append(zone_0)
-
 
         for idx, o in enumerate(openings):
             if o._type == 'door':
