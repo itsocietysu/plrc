@@ -1,5 +1,5 @@
-import json
 import easygui
+import json
 import os
 
 from ImageProcessing.Components import Components
