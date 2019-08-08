@@ -1,18 +1,17 @@
-import os
 import json
 import easygui
+import os
 
-from ImageProcessing.Load import Load
-from ImageProcessing.Preprocessing import Preprocessing
 from ImageProcessing.Components import Components
 from ImageProcessing.Contours import Contours
-from ImageProcessing.RoomConstructor import RoomConstructor
-from ImageProcessing.OpeningPlacement import OpeningPlacement
+from ImageProcessing.Load import Load
 from ImageProcessing.ObjectDetection import ObjectDetection
-from ImageProcessing.Save import Save
+from ImageProcessing.OpeningPlacement import OpeningPlacement
 from ImageProcessing.Pipeline import Pipeline
-
-from Utils.label_map_reader import load_label_map_file, label_map_to_dict
+from ImageProcessing.Preprocessing import Preprocessing
+from ImageProcessing.RoomConstructor import RoomConstructor
+from ImageProcessing.Save import Save
+from Utils.label_map_reader import *
 from Utils.load_graph import load_graph
 
 graph = None
