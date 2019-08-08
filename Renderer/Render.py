@@ -10,7 +10,7 @@ COLOR_MAP = {
     'window': (255, 0, 0),
     'vent_channel': (255, 255, 0),
     'wall': (100, 0, 100),
-    'outer_wall': (0, 0, 200),
+    'outer_wall': (200, 200, 200),
     'bearing_wall': (0, 0, 200),
 
     'none': (100, 100, 100),
@@ -54,7 +54,6 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
 
             cv2.line(img, p1, p2, tc(COLOR_MAP[wall.wall_type]), 2)
 
-
         for o in room.openings:
             for p in o.placement:
                 p1 = p.point_1.mult(scale).add(shift).int_tuple()
@@ -91,6 +90,7 @@ def render_room(img, room, line_w=1, shift=Point(0, 0), scale=1, gray=False):
                     cv2.circle(img, center, r, tc(COLOR_MAP[f.furniture_type]), line_w)
                 if f.furniture_type == 'washer':
                     cv2.rectangle(img, p1, p2, tc(COLOR_MAP[f.furniture_type]), line_w)
+
         """if room.zones:
             for z in room.zones:
                 i = 1
