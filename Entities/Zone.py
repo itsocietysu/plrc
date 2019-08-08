@@ -16,8 +16,7 @@ class Zone:
         return OrderedDict([('type', Zone._type),
                             ('sides_num', self.sides_num),
                             ('zone_type', self.zone_type),
-                            ('points', [p.to_dict() for p in self.points]),
-                            ])
+                            ('points', [p.to_dict() for p in self.points])])
 
     def from_dict(self, obj):
         if 'type' in obj and obj['type'] == Zone._type and 'points' in obj:

@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from Entities.Line import Line
 
+
 class Window:
     _type = 'window'
 

@@ -1,12 +1,9 @@
-
+import numpy as np
 from collections import OrderedDict
-
-from Entities.Point import Point
-
 from shapely.geometry import LineString
 from shapely.geometry import Point as ShapelyPoint
 
-import numpy as np
+from Entities.Point import Point
 
 
 class Line:
@@ -121,13 +118,9 @@ class Line:
 
     def distance_to_point(self, point):
         line = self
-        l = LineString( [(line.point_1.x, line.point_1.y), (line.point_2.x, line.point_2.y)] )
+        l = LineString([(line.point_1.x, line.point_1.y), (line.point_2.x, line.point_2.y)])
         p = ShapelyPoint(point.x, point.y)
         return l.distance(p)
 
     def line_length(self):
         return pow((pow(self.point_1.x - self.point_2.x, 2) + pow(self.point_1.y - self.point_2.y, 2)), 1 / 2)
-
-
-#if __name__ == '__main__':
-#    print(Line(Point(0, 0), Point(1, 0)).line_lenght())
