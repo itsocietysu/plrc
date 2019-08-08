@@ -1,10 +1,13 @@
-from Entities.Furniture import Furniture
-from Entities.Line import Line
-from ImageProcessing.Stage import Stage
 import copy
 import math
+
+from Entities.Furniture import Furniture
+from Entities.Line import Line
 from Entities.Point import Point
 from ImageProcessing.Save import Save
+from ImageProcessing.Stage import Stage
+
+
 SIZE = 20
 
 FURNITURE_TYPE_MAP = {
@@ -29,9 +32,11 @@ FURNITURE_ORIENTATION_MAP = {
 
 D = 5
 
+
 # TODO
 def check_bad_zones():
     return
+
 
 def simple_placement(furniture, start_point, placement_orientation, len_x, len_y, delta=0):
     if len_x > len_y:
@@ -57,12 +62,12 @@ def simple_placement(furniture, start_point, placement_orientation, len_x, len_y
     furniture.placement.point_2.x = p.x
     furniture.placement.point_2.y = p.y
 
+
 def place_furniture(furniture, room):
     walls = room.walls
     delta = 3
     min_wall_len = 473
     angles = []
-
 
     for idx, wall in enumerate(walls):
         # Definition of first wall
@@ -75,7 +80,6 @@ def place_furniture(furniture, room):
                 ((math.fabs(cur_wall.inner_part.point_2.y - next_wall.inner_part.point_2.y) < delta) and
                  (math.fabs(cur_wall.inner_part.point_2.x - next_wall.inner_part.point_2.x) > delta)):
             angles.append(cur_wall.inner_part.point_2)
-
 
     nw_angle = room.zones[0].points[0]
 
@@ -104,7 +108,6 @@ def place_furniture(furniture, room):
 
     len_x = math.fabs(nw_angle.x - ne_angle.x)  #
     len_y = math.fabs(nw_angle.y - sw_angle.y)  #
-
 
     if len_x >= min_wall_len and len_y >= min_wall_len:
 
@@ -178,6 +181,7 @@ def furniture_angle(room, furniture, size, point):
 
     return furniture
 
+
 def furniture_line(room, furniture, point):
     d = D
     rect_size = Point(0, 0)
@@ -233,7 +237,7 @@ class FurniturePlacement(Stage):
         Stage().__init__()
 
     def process(self, parent):
-        """smooth the data"""
+        self.update_status(Stage.STATUS_RUNNING)
 
         res = []
         for i, room in enumerate(self.desc):
