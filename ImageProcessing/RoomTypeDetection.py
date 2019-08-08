@@ -1,7 +1,8 @@
-
-from ImageProcessing.Stage import Stage
-from Entities.Plan import Plan
 import numpy as np
+
+from Entities.Plan import Plan
+from ImageProcessing.Stage import Stage
+
 
 class RoomTypeDetection(Stage):
     _name = 'room_type_detection'
@@ -10,7 +11,6 @@ class RoomTypeDetection(Stage):
         Stage().__init__()
 
     def process(self, parent):
-
         self.update_status(Stage.STATUS_RUNNING)
 
         self.plan = parent.plan
@@ -40,5 +40,3 @@ class RoomTypeDetection(Stage):
                     if num == j:
                         _.type = 'kitchen'
                         return
-
-
