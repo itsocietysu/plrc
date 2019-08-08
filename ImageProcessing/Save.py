@@ -1,29 +1,27 @@
 import json
-import os
 import numpy as np
+import os
 import sdxf
-from Entities.Point import Point
-from Entities.Line import Line
 
 from bottle import template
 
-from Entities.Room import Room
+from Entities.Line import Line
+from Entities.Point import Point
 from ImageProcessing.Stage import Stage
 from Renderer.Render import render_room
 
-"""Upload pro]
-            room.walls = []
-cessing data"""
+
 class Save(Stage):
+    """Save results"""
     _name = 'save'
 
     def __init__(self):
         Stage.__init__(self)
+        self.shape = ()
 
     def process(self, parent):
-        """load the data"""
         self.update_status(Stage.STATUS_RUNNING)
-        self.w, self.h = parent.width, parent.height
+        self.shape = (parent.height, parent.width, 3)
 
         way = 'initial'
 
@@ -111,8 +109,8 @@ class Save(Stage):
         d.saveas(name)
 
     def visualize_stage(self):
-        img = np.zeros((self.h, self.w, 3), np.uint8)
+        img = np.zeros(self.shape, np.uint8)
         for r in self.desc:
-            img = render_room(img, Room().from_dict(r.to_dict()), line_w=3)
+            img = render_room(img, r, line_w=3)
         return img
 
