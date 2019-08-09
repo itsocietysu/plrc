@@ -36,13 +36,6 @@ class OpeningPlacement(Stage):
                     new_room.openings.append(new_item)
             res.append(new_room)
 
-        for opening in self.desc.openings:
-            if opening._type == 'item' or opening._type == 'arch':
-                new_item, rect = self.get_opening_rect(opening)
-
-                if new_item.item_type == 'vent_channel' or new_item.item_type == 'water_pipes':
-                    parent.plan.add_item(new_item)
-
         self.desc = res
         self.update_status(Stage.STATUS_SUCCEEDED)
 
