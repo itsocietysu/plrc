@@ -1,11 +1,23 @@
 # plrc
 
-!!! REUQIRES opencv4.0^ 
+**!!! REUQIRES opencv4.0^**
 
-To run the example use for instance:
-
+## Grabbing the code
+```python
+git clone https://github.com/...
 ```
-python main.py ./sample/191.png ./out/191/ ./Assets/parameters.txt ./out/191/191.dxf
 
-python visualize_rooms.py ./out/191/initial/
+## Setup requirements
+```python
+pip install -r requirements.txt
 ```
+
+## Running application
+```python
+python main.py
+```
+
+## Using
+- Use a simple graphic user interface for choosing the picture for processing.
+- See the result of each step immediately after its completion.
+- See the result of each step after the processing by using a slider.
