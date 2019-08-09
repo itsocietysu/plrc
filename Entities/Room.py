@@ -1,6 +1,5 @@
 from collections import OrderedDict
 
-from Entities.Arch import Arch
 from Entities.Door import Door
 from Entities.Item import Item
 from Entities.Wall import Wall
@@ -13,10 +12,7 @@ class Room:
         'window': lambda _: Window().from_dict(_),
         'door': lambda _: Door().from_dict(_),
         'wall': lambda _: Wall().from_dict(_),
-        'item': lambda _: Item().from_dict(_),
-
-        'arch': lambda _: Arch().from_dict(_),
-
+        'item': lambda _: Item().from_dict(_)
     }
 
     def __init__(self, _walls=[], _openings=[], _type=None):
