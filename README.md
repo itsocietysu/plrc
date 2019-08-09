@@ -3,17 +3,17 @@
 **!!! REUQIRES opencv4.0^**
 
 ## Grabbing the code
-```python
+```
 git clone https://github.com/...
 ```
 
 ## Setup requirements
-```python
+```
 pip install -r requirements.txt
 ```
 
 ## Running application
-```python
+```
 python main.py
 ```
 
