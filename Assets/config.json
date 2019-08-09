@@ -1,5 +1,4 @@
 {
-  "PARAMETERS_FILE": "./parameters.txt",
   "object_detection": {
     "GRAPH_LOCATION": "./frozen_inference_graph.pb",
     "LABEL_MAP_LOCATION": "./label_map.pbtxt"

@@ -16,10 +16,9 @@ class Stage:
         self.desc = None
         self.status = Stage.STATUS_INIT
 
-    def pass_data(self, img, desc, parameters_file=None, graph=None, label_map=None, dxf=None):
+    def pass_data(self, img, desc, graph=None, label_map=None, dxf=None):
         self.img = img
         self.desc = desc
-        self.parameters_file = parameters_file
         self.graph = graph
         self.label_map = label_map
         self.status = Stage.STATUS_INIT

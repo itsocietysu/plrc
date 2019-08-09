@@ -26,12 +26,6 @@ class Load(Stage):
         parent.width = self.img.shape[1]
         parent.height = self.img.shape[0]
         parent.out_dir = self.desc
-        f = open(self.parameters_file)
-        parent.parameters_file = []
-        if f:
-            for line in f:
-                parent.parameters_file.append(line)
-            f.close()
 
         if parent.verbose:
             cv2.namedWindow(parent.window_name, cv2.WINDOW_NORMAL)
