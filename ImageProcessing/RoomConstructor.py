@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 
-from Entities.Arch import Arch
 from Entities.Line import Line
 from Entities.Point import Point
 from Entities.Room import Room
@@ -67,20 +66,10 @@ class RoomConstructor(Stage):
 
         self.align_walls(res)
         self.define_walls_type(res)
-        # self.choose_scale(res)
-        # self.add_arches(res)
 
         self.img = res
         self.desc = self.desc
         self.update_status(Stage.STATUS_SUCCEEDED)
-
-    @staticmethod
-    def choose_wall(res, point):
-        for _ in res:
-            for wall in _.walls:
-                if wall.inner_part.is_point_of_line(point):
-                    return wall
-        return None
 
     def align_walls(self, res):
 
@@ -103,37 +92,6 @@ class RoomConstructor(Stage):
                 align_wall(i, -1)
             align_wall(num_of_walls - 1, 0)
             room.walls = new_walls
-
-    def choose_scale(self, res):
-        if self.parameters_file:
-            f = self.parameters_file
-            point = Point(int(f[1]), int(f[2]))
-            size = int(f[3])
-            wall = self.choose_wall(res, point)
-
-            if wall:
-                w = wall.inner_part
-                wall_len = pow(pow((w.point_2.x - w.point_1.x), 2) + pow((w.point_2.y - w.point_1.y), 2), 1 / 2)
-                pix_to_m = size / wall_len
-                for room in res:
-                    for wall in room.walls:
-                        p1 = wall.inner_part.point_1
-                        p2 = wall.inner_part.point_2
-                        wall_len = pow(pow((p2.x - p1.x), 2) + pow((p2.y - p1.y), 2), 1 / 2)
-                        wall.size = pix_to_m * wall_len
-
-    def add_arches(self, res):
-        if self.parameters_file:
-            f = self.parameters_file
-            if len(f) > 5:
-                i = 5
-                line = Line(Point(int(f[i]), int(f[i + 1])), Point(int(f[i + 2]), int(f[i + 3])))
-                arch = Arch(line)
-                res[0].openings.append(arch)
-            else:
-                return None
-        else:
-            return None
 
     """For detecting wall types"""
     def define_walls_type(self, res):
