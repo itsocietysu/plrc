@@ -103,12 +103,5 @@ venv.bak/
 # mypy
 .mypy_cache/
 .idea
-6.json
-5.json
-4.json
-3.json
-2.json
-1.json
-0.json
-Assets/frozen_inference_graph_seconds.pb
+frozen_inference_graph.pb
 out/
