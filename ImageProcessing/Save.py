@@ -3,8 +3,6 @@ import numpy as np
 import os
 import sdxf
 
-from bottle import template
-
 from Entities.Line import Line
 from Entities.Point import Point
 from ImageProcessing.Stage import Stage
@@ -40,11 +38,8 @@ class Save(Stage):
             with open('%s/%s/%d.json' % (out_dir, way, i), 'wt') as fp:
                 json.dump(_.to_dict(), fp, indent=2)
 
-        # with open('./Assets/templates/viewer_json.tpl', 'rt') as f:
-        #    with open('%s/all_in_one.json' % parent.out_dir, 'wt') as fw:
-        #        fw.write(template(f.read(), rooms=self.desc))
-
-    def save_in_dxf(self, name, desc):
+    @staticmethod
+    def save_in_dxf(name, desc):
         z = 0
         d = sdxf.Drawing()
         for room in desc:
