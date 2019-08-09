@@ -2,6 +2,7 @@ import cv2
 
 from Renderer.Render import render_room
 
+
 class Stage:
     _name = 'base'
 
@@ -13,6 +14,7 @@ class Stage:
     def __init__(self):
         self.img = None
         self.desc = None
+        self.status = Stage.STATUS_INIT
 
     def pass_data(self, img, desc, parameters_file=None, graph=None, label_map=None, dxf=None):
         self.img = img
@@ -20,7 +22,7 @@ class Stage:
         self.parameters_file = parameters_file
         self.graph = graph
         self.label_map = label_map
-        self.status = 'initial'
+        self.status = Stage.STATUS_INIT
         self.dxf = dxf
 
     def process(self, parent):
