@@ -25,7 +25,6 @@ def open_config():
     with open(config, 'r') as f:
         c = json.load(f)
     config_path = os.path.split(config)[0]
-    c['PARAMETERS_FILE'] = os.path.join(config_path, c['PARAMETERS_FILE'])
     c[ObjectDetection._name]['GRAPH_LOCATION'] = os.path.join(config_path, c[ObjectDetection._name]['GRAPH_LOCATION'])
     c[ObjectDetection._name]['LABEL_MAP_LOCATION'] = os.path.join(config_path,
                                                                   c[ObjectDetection._name]['LABEL_MAP_LOCATION'])
@@ -40,7 +39,7 @@ def load():
 
 def process_image(path):
     pipeline = Pipeline(pipeline_steps, path, os.path.join('.', 'out', os.path.splitext(os.path.basename(path))[0]),
-                        config['PARAMETERS_FILE'], _verbose=True, _graph=graph, _label_map=label_map, _config=config)
+                        _verbose=True, _graph=graph, _label_map=label_map, _config=config)
     pipeline.process()
 
 
