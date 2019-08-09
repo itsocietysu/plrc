@@ -16,11 +16,9 @@ class Stage:
         self.desc = None
         self.status = Stage.STATUS_INIT
 
-    def pass_data(self, img, desc, graph=None, label_map=None):
+    def pass_data(self, img, desc):
         self.img = img
         self.desc = desc
-        self.graph = graph
-        self.label_map = label_map
         self.status = Stage.STATUS_INIT
 
     def process(self, parent):

@@ -80,7 +80,7 @@ class Pipeline:
             return
         for i, stage in enumerate(self.pipeline):
             _ = stage()
-            _.pass_data(self.img, self.desc, self.graph, self.label_map)
+            _.pass_data(self.img, self.desc)
             _.process(self)
 
             if _.status == Stage.STATUS_SUCCEEDED:

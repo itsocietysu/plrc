@@ -56,15 +56,15 @@ class ObjectDetection(Stage):
     def process(self, parent):
         self.update_status(Stage.STATUS_RUNNING)
 
-        if self.label_map:
-            labels = self.label_map
+        if parent.label_map:
+            labels = parent.label_map
         else:
             labels = label_map_to_dict(load_label_map_file(parent.config[self._name]['LABEL_MAP_LOCATION']))
 
         tf.logging.set_verbosity(tf.logging.WARN)
 
-        if self.graph:
-            graph = self.graph
+        if parent.graph:
+            graph = parent.graph
         else:
             graph = load_graph(parent.config[self._name]['GRAPH_LOCATION'])
 
