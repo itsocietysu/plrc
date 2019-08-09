@@ -16,13 +16,12 @@ class Stage:
         self.desc = None
         self.status = Stage.STATUS_INIT
 
-    def pass_data(self, img, desc, graph=None, label_map=None, dxf=None):
+    def pass_data(self, img, desc, graph=None, label_map=None):
         self.img = img
         self.desc = desc
         self.graph = graph
         self.label_map = label_map
         self.status = Stage.STATUS_INIT
-        self.dxf = dxf
 
     def process(self, parent):
         raise NotImplemented('pure virtual call')

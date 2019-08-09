@@ -49,8 +49,7 @@ def on_stage_change(images, val):
 
 
 class Pipeline:
-    def __init__(self, _pipeline=[], _img=None, _desc=None, _graph=None, _label_map=None,
-                 _verbose=False, _save_dxf=None, _config=None):
+    def __init__(self, _pipeline=[], _img=None, _desc=None, _graph=None, _label_map=None, _verbose=False, _config=None):
         self.pipeline = _pipeline
         self.img = _img
         self.desc = _desc
@@ -61,7 +60,6 @@ class Pipeline:
         self.config = _config
         self.graph = _graph
         self.label_map = _label_map
-        self.dxf = _save_dxf
 
         self.cnt_stages = len(_pipeline)
         self.images = []
@@ -82,7 +80,7 @@ class Pipeline:
             return
         for i, stage in enumerate(self.pipeline):
             _ = stage()
-            _.pass_data(self.img, self.desc, self.graph, self.label_map, self.dxf)
+            _.pass_data(self.img, self.desc, self.graph, self.label_map)
             _.process(self)
 
             if _.status == Stage.STATUS_SUCCEEDED:
