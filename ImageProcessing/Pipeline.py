@@ -29,7 +29,7 @@ def show_image(img):
 
 
 def on_track_change(images, alpha, stage):
-    if len(images) < stage or len(images) == 0 or images[stage] is None or images[0] is None:
+    if len(images) <= stage or len(images) == 0 or images[stage] is None or images[0] is None:
         return
 
     alpha = alpha / max_alpha
