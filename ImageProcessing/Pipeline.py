@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 
 from ImageProcessing.Stage import Stage
-from Entities.Plan import Plan
 
 window_name = 'process'
 tr_alpha = 'alpha'
@@ -63,7 +62,6 @@ class Pipeline:
         self.config = _config
         self.graph = _graph
         self.label_map = _label_map
-        self.plan = Plan()
         self.dxf = _save_dxf
 
         self.cnt_stages = len(_pipeline)
